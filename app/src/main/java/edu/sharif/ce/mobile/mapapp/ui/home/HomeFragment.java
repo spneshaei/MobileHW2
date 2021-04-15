@@ -46,7 +46,7 @@ public class HomeFragment extends Fragment {
         public void handleMessage(Message msg) {
             HomeFragment fragment = this.fragment.get();
             if (fragment != null) {
-                if (msg.what == NotificationID.Bookmarks.DATA_LOADED_FROM_DB) {
+                if (msg.what == NotificationID.Bookmarks.DATA_LOADED_FROM_DB ) {
                     fragment.adapter.notifyDataSetChanged();
                 }
             }
@@ -64,6 +64,10 @@ public class HomeFragment extends Fragment {
             Bookmark bookmark = adapter.getItem(position);
             // TODO: Use that bookmark and open it in the second tab...
             Log.d("BOOKMARKName", bookmark.getName());
+        });
+        adapter.setDeleteClickListener((view, position) -> {
+            Bookmark bookmark = adapter.getItem(position);
+            Bookmarker.deleteBookmark(getContext(), bookmark);
         });
         recyclerView.setAdapter(adapter);
 

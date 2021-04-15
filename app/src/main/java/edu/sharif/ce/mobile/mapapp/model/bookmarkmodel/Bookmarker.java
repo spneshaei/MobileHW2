@@ -9,6 +9,7 @@ import java.util.concurrent.ThreadPoolExecutor;
 
 import edu.sharif.ce.mobile.mapapp.model.notifhandling.NotificationCenter;
 import edu.sharif.ce.mobile.mapapp.model.notifhandling.NotificationID;
+import edu.sharif.ce.mobile.mapapp.model.notifhandling.Subscriber;
 
 /**
  * Created by Seyyed Parsa Neshaei on 4/15/21
@@ -37,6 +38,7 @@ public class Bookmarker {
             Bookmark bookmark = new Bookmark(name, lat, lon);
             db.bookmarkDao().insertBookmark(bookmark);
             NotificationCenter.notify(NotificationID.Bookmarks.DATA_INSERTED_INTO_DB);
+            reloadBookmarkList(context);
         });
     }
 
@@ -45,6 +47,15 @@ public class Bookmarker {
             BookmarkDatabase db = BookmarkDatabase.getInstance(context);
             db.bookmarkDao().deleteBookmark(bookmark);
             NotificationCenter.notify(NotificationID.Bookmarks.DATA_REMOVED_FROM_DB);
+            reloadBookmarkList(context);
         });
     }
+
+//    @Override
+//    public boolean sendEmptyMessage(int what) {
+//        if (what == NotificationID.Bookmarks.DATA_INSERTED_INTO_DB || what == NotificationID.Bookmarks.DATA_REMOVED_FROM_DB) {
+//            reloadBookmarkList(getApplicationContext());
+//        }
+//        return false;
+//    }
 }
