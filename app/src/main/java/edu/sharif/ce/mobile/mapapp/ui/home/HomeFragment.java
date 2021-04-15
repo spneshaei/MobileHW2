@@ -21,6 +21,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.snackbar.Snackbar;
 
 import java.lang.ref.WeakReference;
+import java.util.ArrayList;
 
 import edu.sharif.ce.mobile.mapapp.R;
 import edu.sharif.ce.mobile.mapapp.model.bookmarkmodel.Bookmark;
@@ -32,6 +33,8 @@ import edu.sharif.ce.mobile.mapapp.model.notifhandling.Subscriber;
 public class HomeFragment extends Fragment {
 
     BookmarkRecyclerViewAdapter adapter;
+    ArrayList<Bookmark> filteredBookmarks = new ArrayList<>();
+    String searchTerm = "";
 
     private final WeakHandler handler = new WeakHandler(this);
 
@@ -46,8 +49,8 @@ public class HomeFragment extends Fragment {
         public void handleMessage(Message msg) {
             HomeFragment fragment = this.fragment.get();
             if (fragment != null) {
-                if (msg.what == NotificationID.Bookmarks.DATA_LOADED_FROM_DB ) {
-                    fragment.adapter.notifyDataSetChanged();
+                if (msg.what == NotificationID.Bookmarks.DATA_LOADED_FROM_DB) {
+                    fragment.notifyDataSetChanged();
                 }
             }
         }
@@ -59,7 +62,7 @@ public class HomeFragment extends Fragment {
 
         RecyclerView recyclerView = root.findViewById(R.id.bookmarksRecyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        adapter = new BookmarkRecyclerViewAdapter(getContext(), Bookmarker.getBookmarkList());
+        notifyDataSetChanged();
         adapter.setClickListener((view, position) -> {
             Bookmark bookmark = adapter.getItem(position);
             // TODO: Use that bookmark and open it in the second tab...
@@ -81,5 +84,21 @@ public class HomeFragment extends Fragment {
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
         if (adapter != null) Bookmarker.reloadBookmarkList(getContext());
+    }
+
+    public void notifyDataSetChanged() {
+        filteredBookmarks.clear();
+        if (searchTerm.equals("")) {
+            filteredBookmarks.addAll(Bookmarker.getBookmarkList());
+        } else {
+            for (Bookmark bookmark: Bookmarker.getBookmarkList()) {
+                if (bookmark.getName().contains(searchTerm)) filteredBookmarks.add(bookmark);
+            }
+        }
+        if (adapter == null) {
+            adapter = new BookmarkRecyclerViewAdapter(getContext(), filteredBookmarks);
+        } else {
+            adapter.notifyDataSetChanged();
+        }
     }
 }
