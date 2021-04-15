@@ -4,6 +4,7 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
@@ -21,6 +22,7 @@ public class BookmarkRecyclerViewAdapter extends RecyclerView.Adapter<BookmarkRe
     private List<Bookmark> data;
     private LayoutInflater inflater;
     private ItemClickListener clickListener;
+    private ItemClickListener deleteClickListener;
 
     BookmarkRecyclerViewAdapter(Context context, List<Bookmark> data) {
         this.inflater = LayoutInflater.from(context);
@@ -48,11 +50,16 @@ public class BookmarkRecyclerViewAdapter extends RecyclerView.Adapter<BookmarkRe
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         TextView txtTitle;
         TextView txtLatLon;
+        Button btnDelete;
 
         ViewHolder(View itemView) {
             super(itemView);
             txtTitle = itemView.findViewById(R.id.bookmarksRecyclerView_txtTitle);
             txtLatLon = itemView.findViewById(R.id.bookmarksRecyclerView_txtLatLon);
+            btnDelete = itemView.findViewById(R.id.bookmarksRecyclerView_btnDelete);
+            btnDelete.setOnClickListener(view -> {
+                if (deleteClickListener != null) deleteClickListener.onItemClick(view, getAdapterPosition());
+            });
             itemView.setOnClickListener(this);
         }
 
@@ -68,6 +75,10 @@ public class BookmarkRecyclerViewAdapter extends RecyclerView.Adapter<BookmarkRe
 
     void setClickListener(ItemClickListener itemClickListener) {
         this.clickListener = itemClickListener;
+    }
+
+    void setDeleteClickListener(ItemClickListener deleteClickListener) {
+        this.deleteClickListener = deleteClickListener;
     }
 
     public interface ItemClickListener {
