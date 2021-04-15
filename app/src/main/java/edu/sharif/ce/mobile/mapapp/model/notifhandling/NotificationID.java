@@ -14,5 +14,7 @@ public class NotificationID {
 
     public static class Bookmarks {
         public static int DATA_LOADED_FROM_DB = 5;
+        public static int DATA_REMOVED_FROM_DB = 6;
+        public static int DATA_INSERTED_INTO_DB = 7;
     }
 }
