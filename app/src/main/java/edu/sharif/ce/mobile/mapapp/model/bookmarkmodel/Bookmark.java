@@ -21,6 +21,22 @@ public class Bookmark {
     @ColumnInfo(name = "lon")
     private double lon;
 
+    public int getId() {
+        return id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public double getLat() {
+        return lat;
+    }
+
+    public double getLon() {
+        return lon;
+    }
+
     public Bookmark(int id, String name, double lat, double lon) {
         this.id = id;
         this.name = name;
