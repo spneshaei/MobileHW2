@@ -51,6 +51,17 @@ public class Bookmarker {
         });
     }
 
+    public static void deleteAllBookmarks(Context context) {
+        executor.execute(() -> {
+            BookmarkDatabase db = BookmarkDatabase.getInstance(context);
+            db.bookmarkDao().deleteTable();
+            NotificationCenter.notify(NotificationID.Bookmarks.TABLE_REMOVED_FROM_DB);
+            // TODO: Other tables to remove too??
+            // TODO: Should we also save preferences in the preferences pane to the SQLite Room?
+            reloadBookmarkList(context);
+        });
+    }
+
 //    @Override
 //    public boolean sendEmptyMessage(int what) {
 //        if (what == NotificationID.Bookmarks.DATA_INSERTED_INTO_DB || what == NotificationID.Bookmarks.DATA_REMOVED_FROM_DB) {

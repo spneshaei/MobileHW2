@@ -22,4 +22,7 @@ public interface BookmarkDao {
 
     @Delete
     void deleteBookmark(Bookmark bookmark);
+
+    @Query("DELETE FROM bookmark")
+    public void deleteTable();
 }

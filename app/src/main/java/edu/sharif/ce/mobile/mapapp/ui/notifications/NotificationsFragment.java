@@ -16,6 +16,7 @@ import androidx.lifecycle.ViewModelProvider;
 import java.util.UUID;
 
 import edu.sharif.ce.mobile.mapapp.R;
+import edu.sharif.ce.mobile.mapapp.model.bookmarkmodel.Bookmark;
 import edu.sharif.ce.mobile.mapapp.model.bookmarkmodel.Bookmarker;
 
 public class NotificationsFragment extends Fragment {
@@ -23,8 +24,23 @@ public class NotificationsFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_notifications, container, false);
-        final Button button = root.findViewById(R.id.btnAddRandomBookmark);
-        button.setOnClickListener(view -> Bookmarker.insertBookmark(getContext(), UUID.randomUUID().toString(), 1.0, 2.0));
+        final Button btnAddRandomBookmark = root.findViewById(R.id.btnAddRandomBookmark);
+        final Button btnClearData = root.findViewById(R.id.btnClearAllData);
+        btnAddRandomBookmark.setOnClickListener(view -> insertRandomBookmark());
+        btnClearData.setOnClickListener(view -> clearData());
         return root;
+    }
+
+    public void clearData() {
+        // TODO: Alert view before cleaning!
+        Bookmarker.deleteAllBookmarks(getContext());
+        // TODO: Also delete SharedPrefs
+        // getContext().getSharedPreferences("YOUR_PREFS", 0).edit().clear().commit();
+        // TODO: Also delete caches
+        // TODO: Rotation problem in app!!!
+    }
+
+    public void insertRandomBookmark() {
+        Bookmarker.insertBookmark(getContext(), UUID.randomUUID().toString(), 1.0, 2.0);
     }
 }

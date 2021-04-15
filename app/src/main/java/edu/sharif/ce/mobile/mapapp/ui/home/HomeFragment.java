@@ -63,15 +63,8 @@ public class HomeFragment extends Fragment {
         RecyclerView recyclerView = root.findViewById(R.id.bookmarksRecyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         notifyDataSetChanged();
-        adapter.setClickListener((view, position) -> {
-            Bookmark bookmark = adapter.getItem(position);
-            // TODO: Use that bookmark and open it in the second tab...
-            Log.d("BOOKMARKName", bookmark.getName());
-        });
-        adapter.setDeleteClickListener((view, position) -> {
-            Bookmark bookmark = adapter.getItem(position);
-            Bookmarker.deleteBookmark(getContext(), bookmark);
-        });
+        adapter.setClickListener((view, position) -> openBookmark(position));
+        adapter.setDeleteClickListener((view, position) -> deleteBookmark(position));
         recyclerView.setAdapter(adapter);
 
         NotificationCenter.registerForNotification(this.handler, NotificationID.Bookmarks.DATA_LOADED_FROM_DB);
@@ -84,6 +77,18 @@ public class HomeFragment extends Fragment {
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
         if (adapter != null) Bookmarker.reloadBookmarkList(getContext());
+    }
+
+    public void openBookmark(int position) {
+        Bookmark bookmark = adapter.getItem(position);
+        // TODO: Use that bookmark and open it in the second tab...
+        Log.d("BOOKMARKName", bookmark.getName());
+    }
+
+    public void deleteBookmark(int position) {
+        // TODO: Alert view before cleaning!
+        Bookmark bookmark = adapter.getItem(position);
+        Bookmarker.deleteBookmark(getContext(), bookmark);
     }
 
     public void notifyDataSetChanged() {
