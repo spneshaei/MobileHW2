@@ -22,7 +22,6 @@ public class Bookmarker {
         return bookmarkList;
     }
 
-    // Attention: the next method MUST be run on a worker's thread and not on the UI thread
     public static void reloadBookmarkList(Context context) {
         executor.execute(() -> {
             BookmarkDatabase db = BookmarkDatabase.getInstance(context);
@@ -32,7 +31,6 @@ public class Bookmarker {
         });
     }
 
-    // Attention: the next method MUST be run on a worker's thread and not on the UI thread
     public static void insertBookmark(Context context, String name, double lat, double lon) {
         executor.execute(() -> {
             BookmarkDatabase db = BookmarkDatabase.getInstance(context);
@@ -42,7 +40,6 @@ public class Bookmarker {
         });
     }
 
-    // Attention: the next method MUST be run on a worker's thread and not on the UI thread
     public static void deleteBookmark(Context context, Bookmark bookmark) {
         executor.execute(() -> {
             BookmarkDatabase db = BookmarkDatabase.getInstance(context);
