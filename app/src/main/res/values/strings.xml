@@ -3,4 +3,5 @@
     <string name="title_home">Bookmarks</string>
     <string name="title_dashboard">Map</string>
     <string name="title_notifications">Settings</string>
+    <string name="mapbox_access_token">pk.eyJ1IjoiYWJvb3RzIiwiYSI6ImNrbmtta2JpYjA5aDAyd21wOWhvOXVpc3IifQ.ykVD39lvqcfKuAM03mGWPg</string>
 </resources>
