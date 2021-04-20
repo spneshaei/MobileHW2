@@ -18,6 +18,8 @@ import com.mapbox.android.core.permissions.PermissionsListener;
 import com.mapbox.android.core.permissions.PermissionsManager;
 import com.mapbox.mapboxsdk.Mapbox;
 import com.mapbox.mapboxsdk.annotations.MarkerOptions;
+import com.mapbox.mapboxsdk.camera.CameraPosition;
+import com.mapbox.mapboxsdk.camera.CameraUpdateFactory;
 import com.mapbox.mapboxsdk.geometry.LatLng;
 import com.mapbox.mapboxsdk.location.LocationComponent;
 import com.mapbox.mapboxsdk.location.LocationComponentActivationOptions;
@@ -50,6 +52,28 @@ public class DashboardFragment extends Fragment implements OnMapReadyCallback, P
         mapView = root.findViewById(R.id.mapView);
         mapView.onCreate(savedInstanceState);
         mapView.getMapAsync(this);
+
+        root.findViewById(R.id.locNow).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                Location lastKnownLocation = mapboxMap.getLocationComponent().getLastKnownLocation();
+
+                if (lastKnownLocation != null) {
+
+                    CameraPosition position = new CameraPosition.Builder()
+                            .target(new LatLng(lastKnownLocation.getLatitude(), lastKnownLocation.getLongitude())) // Sets the new camera position
+                            .zoom(15)
+                            .bearing(0)
+                            .tilt(0)
+                            .build(); // Creates a CameraPosition from the builder
+
+                    mapboxMap.animateCamera(CameraUpdateFactory
+                            .newCameraPosition(position), 1000);
+                }
+
+            }
+        });
 
         return root;
     }
