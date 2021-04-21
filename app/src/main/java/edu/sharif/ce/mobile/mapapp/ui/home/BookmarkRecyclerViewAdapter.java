@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
@@ -50,7 +51,7 @@ public class BookmarkRecyclerViewAdapter extends RecyclerView.Adapter<BookmarkRe
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         TextView txtTitle;
         TextView txtLatLon;
-        Button btnDelete;
+        ImageButton btnDelete;
 
         ViewHolder(View itemView) {
             super(itemView);
