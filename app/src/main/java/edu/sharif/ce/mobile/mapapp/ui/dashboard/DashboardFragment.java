@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -17,6 +18,8 @@ import androidx.lifecycle.ViewModelProvider;
 import com.mapbox.android.core.permissions.PermissionsListener;
 import com.mapbox.android.core.permissions.PermissionsManager;
 import com.mapbox.mapboxsdk.Mapbox;
+import com.mapbox.mapboxsdk.annotations.Icon;
+import com.mapbox.mapboxsdk.annotations.IconFactory;
 import com.mapbox.mapboxsdk.annotations.MarkerOptions;
 import com.mapbox.mapboxsdk.camera.CameraPosition;
 import com.mapbox.mapboxsdk.camera.CameraUpdateFactory;
@@ -29,6 +32,8 @@ import com.mapbox.mapboxsdk.maps.MapView;
 import com.mapbox.mapboxsdk.maps.MapboxMap;
 import com.mapbox.mapboxsdk.maps.OnMapReadyCallback;
 import com.mapbox.mapboxsdk.maps.Style;
+import com.mapbox.mapboxsdk.plugins.markerview.MarkerView;
+import com.mapbox.mapboxsdk.plugins.markerview.MarkerViewManager;
 
 import java.util.List;
 
@@ -38,7 +43,9 @@ import edu.sharif.ce.mobile.mapapp.R;
 public class DashboardFragment extends Fragment implements OnMapReadyCallback, PermissionsListener {
     private PermissionsManager permissionsManager;
     private MapboxMap mapboxMap;
+    private MarkerViewManager markerViewManager;
     private MapView mapView;
+    private View root;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -46,7 +53,7 @@ public class DashboardFragment extends Fragment implements OnMapReadyCallback, P
         Mapbox.getInstance(getActivity(), getString(R.string.mapbox_access_token));
 
 
-        View root = inflater.inflate(R.layout.fragment_dashboard, container, false);
+        this.root = inflater.inflate(R.layout.fragment_dashboard, container, false);
 
 
         mapView = root.findViewById(R.id.mapView);
@@ -81,7 +88,24 @@ public class DashboardFragment extends Fragment implements OnMapReadyCallback, P
     @Override
     public void onMapReady(@NonNull MapboxMap mapboxMap) {
         DashboardFragment.this.mapboxMap = mapboxMap;
-//        Location lastKnownLocation = mapboxMap.getLocationComponent().getLastKnownLocation();
+        DashboardFragment.this.markerViewManager = new MarkerViewManager(mapView, mapboxMap);
+
+
+        mapboxMap.addOnMapLongClickListener(new MapboxMap.OnMapLongClickListener() {
+            @Override
+            public boolean onMapLongClick(@NonNull LatLng point) {
+                mapboxMap.clear();
+                IconFactory iconFactory = IconFactory.getInstance(getContext());
+                Icon icon = iconFactory.fromResource(R.drawable.marker_red3);
+                mapboxMap.addMarker(new MarkerOptions().position(new LatLng(point.getLatitude(), point.getLongitude())).icon(icon));
+//                View customView = LayoutInflater.from(getActivity()).inflate(
+//                        R.layout.fragment_dashboard, null);
+//                MarkerView markerView = new MarkerView(point, customView);
+//                markerViewManager.addMarker(markerView);
+//                markerViewManager.removeMarker(markerView);
+                return true;
+            }
+        });
 
         mapboxMap.setStyle(Style.OUTDOORS,
                 new Style.OnStyleLoaded() {
@@ -181,6 +205,9 @@ public class DashboardFragment extends Fragment implements OnMapReadyCallback, P
     @Override
     public void onDestroyView() {
         super.onDestroyView();
+        if (markerViewManager != null) {
+            markerViewManager.onDestroy();
+        }
         mapView.onDestroy();
     }
 
