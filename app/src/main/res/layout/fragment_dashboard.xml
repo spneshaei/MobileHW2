@@ -22,7 +22,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="end|bottom"
             android:layout_marginEnd="30dp"
-            android:layout_marginVertical="80dp"
+            android:layout_marginVertical="60dp"
             android:src="@drawable/ic_baseline_my_location_24"
             tools:ignore="ContentDescription" />
     </com.mapbox.mapboxsdk.maps.MapView>

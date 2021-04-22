@@ -1,12 +1,17 @@
 package edu.sharif.ce.mobile.mapapp.ui.dashboard;
 
 import android.content.DialogInterface;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.location.Location;
 import android.os.Bundle;
 import android.text.Editable;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -39,6 +44,7 @@ import com.mapbox.mapboxsdk.maps.Style;
 import com.mapbox.mapboxsdk.plugins.markerview.MarkerView;
 import com.mapbox.mapboxsdk.plugins.markerview.MarkerViewManager;
 
+import java.text.DecimalFormat;
 import java.util.List;
 
 import edu.sharif.ce.mobile.mapapp.MainActivity;
@@ -102,6 +108,7 @@ public class DashboardFragment extends Fragment implements OnMapReadyCallback, P
                 mapboxMap.clear();
                 IconFactory iconFactory = IconFactory.getInstance(getContext());
                 Icon icon = iconFactory.fromResource(R.drawable.marker_red3);
+
                 mapboxMap.addMarker(new MarkerOptions().position(new LatLng(point.getLatitude(), point.getLongitude())).icon(icon));
 //                View customView = LayoutInflater.from(getActivity()).inflate(
 //                        R.layout.fragment_dashboard, null);
@@ -112,7 +119,9 @@ public class DashboardFragment extends Fragment implements OnMapReadyCallback, P
                 AlertDialog.Builder alert = new AlertDialog.Builder(getContext());
                 final EditText edittext = new EditText(getContext());
                 alert.setMessage("Location Name");
-                alert.setTitle("Save Location (" + point.getLatitude() + ", " + point.getAltitude() + ")");
+                DecimalFormat df = new DecimalFormat("#.##");
+
+                alert.setTitle("Save Location (" + df.format(point.getLatitude()) + ", " + df.format(point.getAltitude()) + ")");
                 alert.setView(edittext);
 
                 alert.setPositiveButton("Save", new DialogInterface.OnClickListener() {
@@ -128,7 +137,14 @@ public class DashboardFragment extends Fragment implements OnMapReadyCallback, P
                     }
                 });
 
-                alert.show();
+                AlertDialog dialog = alert.create();
+                dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+                WindowManager.LayoutParams wmlp = dialog.getWindow().getAttributes();
+
+                wmlp.gravity = Gravity.BOTTOM;
+                wmlp.verticalMargin = 0.08F;
+
+                dialog.show();
 
                 return true;
             }
