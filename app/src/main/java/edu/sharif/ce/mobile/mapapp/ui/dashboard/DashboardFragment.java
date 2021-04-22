@@ -1,16 +1,20 @@
 package edu.sharif.ce.mobile.mapapp.ui.dashboard;
 
+import android.content.DialogInterface;
 import android.location.Location;
 import android.os.Bundle;
+import android.text.Editable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
@@ -39,6 +43,7 @@ import java.util.List;
 
 import edu.sharif.ce.mobile.mapapp.MainActivity;
 import edu.sharif.ce.mobile.mapapp.R;
+import edu.sharif.ce.mobile.mapapp.model.bookmarkmodel.Bookmarker;
 
 public class DashboardFragment extends Fragment implements OnMapReadyCallback, PermissionsListener {
     private PermissionsManager permissionsManager;
@@ -103,6 +108,28 @@ public class DashboardFragment extends Fragment implements OnMapReadyCallback, P
 //                MarkerView markerView = new MarkerView(point, customView);
 //                markerViewManager.addMarker(markerView);
 //                markerViewManager.removeMarker(markerView);
+
+                AlertDialog.Builder alert = new AlertDialog.Builder(getContext());
+                final EditText edittext = new EditText(getContext());
+                alert.setMessage("Location Name");
+                alert.setTitle("Save Location (" + point.getLatitude() + ", " + point.getAltitude() + ")");
+                alert.setView(edittext);
+
+                alert.setPositiveButton("Save", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        String editTextValue = edittext.getText().toString();
+                        Bookmarker.insertBookmark(getContext(), editTextValue, point.getLatitude(), point.getAltitude());
+                    }
+                });
+
+                alert.setNegativeButton("Cancle", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        mapboxMap.clear();
+                    }
+                });
+
+                alert.show();
+
                 return true;
             }
         });
