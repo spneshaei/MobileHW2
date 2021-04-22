@@ -24,7 +24,7 @@
             android:layout_marginEnd="30dp"
             android:layout_marginVertical="80dp"
             android:src="@drawable/ic_baseline_my_location_24"
-            android:contentDescription="TODO" />
+            tools:ignore="ContentDescription" />
     </com.mapbox.mapboxsdk.maps.MapView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
