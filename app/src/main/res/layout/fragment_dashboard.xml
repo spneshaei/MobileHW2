@@ -12,17 +12,30 @@
         android:id="@+id/mapView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        app:layout_constraintTop_toTopOf="parent"
         mapbox:mapbox_cameraZoom="15"
-        tools:layout_editor_absoluteX="-130dp"
-        tools:layout_editor_absoluteY="-16dp">
+        tools:layout_editor_absoluteX="-130dp">
+
+        <SearchView
+            android:id="@+id/searchView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="parent"
+            android:layout_marginTop="6dp"
+            android:background="@color/white"
+            android:paddingHorizontal="5dp"
+            android:layout_marginHorizontal="20dp"
+            android:queryHint="Search Location"
+            android:iconifiedByDefault="false"
+            />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/locNow"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="end|bottom"
-            android:layout_marginEnd="30dp"
             android:layout_marginVertical="60dp"
+            android:layout_marginEnd="30dp"
             android:src="@drawable/ic_baseline_my_location_24"
             tools:ignore="ContentDescription" />
     </com.mapbox.mapboxsdk.maps.MapView>

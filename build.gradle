@@ -18,18 +18,6 @@ allprojects {
         google()
         jcenter()
 
-
-        maven {
-            url 'https://api.mapbox.com/downloads/v1/vision/android/maven'
-            authentication {
-                basic(BasicAuthentication)
-            }
-            credentials {
-                username project.properties['mapboxMavenUser'] ?: ""
-                password project.properties['mapboxMavenToken'] ?: ""
-            }
-        }
-
         maven {
             url 'https://api.mapbox.com/downloads/v2/releases/maven'
             authentication {
