@@ -43,6 +43,7 @@ import java.util.List;
 
 import edu.sharif.ce.mobile.mapapp.R;
 import edu.sharif.ce.mobile.mapapp.model.bookmarkmodel.Bookmarker;
+import edu.sharif.ce.mobile.mapapp.model.utils.NetworkInterface;
 
 public class DashboardFragment extends Fragment implements OnMapReadyCallback, PermissionsListener {
     private PermissionsManager permissionsManager;
@@ -156,8 +157,9 @@ public class DashboardFragment extends Fragment implements OnMapReadyCallback, P
 
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
-            public boolean onQueryTextSubmit(String query) {
-                Log.d("hi",query);
+            public synchronized boolean onQueryTextSubmit(String query) {
+                Log.d("hi", query);
+                NetworkInterface.getLocData(query);
                 return false;
             }
 

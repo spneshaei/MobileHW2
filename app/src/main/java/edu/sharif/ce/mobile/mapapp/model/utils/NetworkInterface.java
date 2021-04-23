@@ -18,39 +18,59 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Objects;
 
+import edu.sharif.ce.mobile.mapapp.R;
+import edu.sharif.ce.mobile.mapapp.model.bookmarkmodel.Bookmark;
 import edu.sharif.ce.mobile.mapapp.model.notifhandling.NotificationCenter;
 import edu.sharif.ce.mobile.mapapp.model.notifhandling.NotificationID;
 
 
 public class NetworkInterface {
-//    private final static String API_KEY_FOR_COIN_MARKET_CAP = "8c4eece6-2099-4a21-982e-7880a4d2a090"; //"ae590806-c68e-46c5-8577-e5640c7d4b41";
-//    private final static String API_KEY_FOR_COIN_API = "1D0238A5-FEDF-42EB-86F4-AE838AE2C9E7";
+    private final static String API_KEY_FOR_MAP_BOX = "pk.eyJ1IjoiYWJvb3RzIiwiYSI6ImNrbmtta2JpYjA5aDAyd21wOWhvOXVpc3IifQ.ykVD39lvqcfKuAM03mGWPg";
 
-    public static void getCryptoData(final int start, int limit) {
-//        OkHttpClient okHttpClient = new OkHttpClient();
-//
-//        HttpUrl.Builder urlBuilder = HttpUrl.parse("https://pro-api.coinmarketcap.com/v1/cryptocurrency/listings/latest?limit="
-//                .concat(String.valueOf(limit)).concat("&start=".concat(String.valueOf(start))))
-//                .newBuilder();
-//
-//        String url = urlBuilder.build().toString();
-//
-//        final Request request = new Request.Builder().url(url)
-//                .addHeader("X-CMC_PRO_API_KEY", API_KEY_FOR_COIN_MARKET_CAP)
-//                .build();
-//
-//        okHttpClient.newCall(request).enqueue(new Callback() {
-//            @Override
-//            public void onFailure(Request request, IOException e) {
-//                Log.e("network", Objects.requireNonNull(e.getMessage()));
-//            }
-//
-//            @Override
-//            public void onResponse(Response response) throws IOException {
-//
-//            }
-//        });
+    public static void getLocData(String location) {
+        OkHttpClient okHttpClient = new OkHttpClient();
 
+        HttpUrl.Builder urlBuilder = HttpUrl.parse("https://api.mapbox.com/geocoding/v5/mapbox.places/"
+                .concat(String.valueOf(location)).concat(".json?access_token=").concat(API_KEY_FOR_MAP_BOX))
+                .newBuilder();
+
+        String url = urlBuilder.build().toString();
+
+        final Request request = new Request.Builder().url(url)
+                .build();
+
+        okHttpClient.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Request request, IOException e) {
+                Log.e("network", Objects.requireNonNull(e.getMessage()));
+            }
+
+            @Override
+            public void onResponse(Response response) throws IOException {
+                if (!response.isSuccessful()) {
+                    Log.e("network", response.body().string());
+                } else {
+                    String body = response.body().string();
+                    Log.d("response", body);
+                    try {
+                        ArrayList<Bookmark> bookmarks = new ArrayList<>();
+                        JSONObject outerObj = new JSONObject(body);
+                        JSONArray data_array = new JSONArray(outerObj.getString("features"));
+                        for (int i = 0; i < data_array.length(); i++) {
+                            JSONObject object = (JSONObject) data_array.get(i);
+                            JSONArray inner_object = object.getJSONArray("center");
+                            String name = object.getString("place_name");
+                            double lon = (double) inner_object.get(0);
+                            double lat = (double) inner_object.get(1);
+                            bookmarks.add(new Bookmark(name,lat,lon));
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
+                }
+            }
+        });
     }
 }
 
