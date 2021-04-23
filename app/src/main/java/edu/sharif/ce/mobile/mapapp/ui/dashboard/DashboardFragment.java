@@ -3,6 +3,7 @@ package edu.sharif.ce.mobile.mapapp.ui.dashboard;
 import android.content.DialogInterface;
 import android.location.Location;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,6 +11,7 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.EditText;
+import android.widget.SearchView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -48,6 +50,7 @@ public class DashboardFragment extends Fragment implements OnMapReadyCallback, P
     private MarkerViewManager markerViewManager;
     private MapView mapView;
     private View root;
+    private SearchView searchView;
 
 
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -84,6 +87,7 @@ public class DashboardFragment extends Fragment implements OnMapReadyCallback, P
 
             }
         });
+        searchView = root.findViewById(R.id.searchView);
 
         return root;
     }
@@ -149,6 +153,19 @@ public class DashboardFragment extends Fragment implements OnMapReadyCallback, P
                         enableLocationComponent(style);
                     }
                 });
+
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                Log.d("hi",query);
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                return false;
+            }
+        });
     }
 
     @SuppressWarnings({"MissingPermission"})
