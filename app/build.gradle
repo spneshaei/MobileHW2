@@ -54,5 +54,10 @@ dependencies {
     implementation 'com.mapbox.mapboxsdk:mapbox-android-sdk:9.6.1'
     implementation 'com.mapbox.mapboxsdk:mapbox-android-plugin-markerview-v9:0.4.0'
 
+    implementation "com.mapbox.vision:mapbox-android-vision:0.13.0"
+    implementation "com.mapbox.vision:mapbox-android-vision-ar:0.13.0"
+    implementation "com.mapbox.vision:mapbox-android-vision-safety:0.13.0"
+
+
 
 }
