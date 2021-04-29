@@ -1,7 +1,9 @@
 package edu.sharif.ce.mobile.mapapp.ui.dashboard;
 
 import android.content.DialogInterface;
+import android.content.pm.PackageManager;
 import android.location.Location;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
@@ -12,10 +14,13 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.SearchView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
 import com.mapbox.android.core.permissions.PermissionsListener;
@@ -23,6 +28,7 @@ import com.mapbox.android.core.permissions.PermissionsManager;
 import com.mapbox.mapboxsdk.Mapbox;
 import com.mapbox.mapboxsdk.annotations.Icon;
 import com.mapbox.mapboxsdk.annotations.IconFactory;
+import com.mapbox.mapboxsdk.annotations.Marker;
 import com.mapbox.mapboxsdk.annotations.MarkerOptions;
 import com.mapbox.mapboxsdk.camera.CameraPosition;
 import com.mapbox.mapboxsdk.camera.CameraUpdateFactory;
@@ -38,6 +44,7 @@ import com.mapbox.mapboxsdk.maps.Style;
 import com.mapbox.mapboxsdk.plugins.markerview.MarkerViewManager;
 
 
+import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.util.List;
 
@@ -45,13 +52,21 @@ import edu.sharif.ce.mobile.mapapp.R;
 import edu.sharif.ce.mobile.mapapp.model.bookmarkmodel.Bookmarker;
 import edu.sharif.ce.mobile.mapapp.model.utils.NetworkInterface;
 
-public class DashboardFragment extends Fragment implements OnMapReadyCallback, PermissionsListener {
+import static androidx.core.content.ContextCompat.getSystemService;
+
+public class DashboardFragment extends Fragment implements OnMapReadyCallback, PermissionsListener, GPSCallback {
     private PermissionsManager permissionsManager;
     private MapboxMap mapboxMap;
     private MarkerViewManager markerViewManager;
     private MapView mapView;
     private View root;
     private SearchView searchView;
+    private GPSManager gpsManager = null;
+    private double speed = 0.0;
+    private Boolean isGPSEnabled = false;
+    private LocationManager locationManager;
+    private double currentSpeed, kmphSpeed;
+    private TextView mySpeedText;
 
 
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -66,6 +81,7 @@ public class DashboardFragment extends Fragment implements OnMapReadyCallback, P
         mapView = root.findViewById(R.id.mapView);
         mapView.onCreate(savedInstanceState);
         mapView.getMapAsync(this);
+        mySpeedText = root.findViewById(R.id.mySpeed);
 
         root.findViewById(R.id.locNow).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -90,7 +106,30 @@ public class DashboardFragment extends Fragment implements OnMapReadyCallback, P
         });
         searchView = root.findViewById(R.id.searchView);
 
+        try {
+            if (ContextCompat.checkSelfPermission(getActivity(), android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(getActivity(), new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION}, 101);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+
+        getCurrentSpeed(getView());
+
         return root;
+    }
+
+    public void getCurrentSpeed(View view) {
+        locationManager = (LocationManager) getActivity().getSystemService(getActivity().LOCATION_SERVICE);
+        gpsManager = new GPSManager(getContext());
+        isGPSEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+        if (isGPSEnabled) {
+            gpsManager.startListening(getActivity().getApplicationContext());
+            gpsManager.setGPSCallback(this);
+        } else {
+            gpsManager.showSettingsAlert();
+        }
     }
 
     @Override
@@ -155,11 +194,16 @@ public class DashboardFragment extends Fragment implements OnMapReadyCallback, P
                     }
                 });
 
+
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
-            public synchronized boolean onQueryTextSubmit(String query) {
+            public boolean onQueryTextSubmit(String query) {
+                searchView.clearFocus();
                 Log.d("hi", query);
-                NetworkInterface.getLocData(query);
+                if (query != null) {
+                    NetworkInterface.getLocData(query);
+                    return true;
+                }
                 return false;
             }
 
@@ -263,7 +307,24 @@ public class DashboardFragment extends Fragment implements OnMapReadyCallback, P
             markerViewManager.onDestroy();
         }
         mapView.onDestroy();
+        gpsManager.stopListening();
+        gpsManager.setGPSCallback(null);
+        gpsManager = null;
     }
 
 
+    @Override
+    public void onGPSUpdate(Location location) {
+        speed = location.getSpeed();
+        currentSpeed = round(speed, 3, BigDecimal.ROUND_HALF_UP);
+        kmphSpeed = round((currentSpeed * 3.6), 3, BigDecimal.ROUND_HALF_UP);
+        Log.d("speed", kmphSpeed + "km/h");
+        mySpeedText.setText(String.format("%s km/h", kmphSpeed));
+    }
+
+    public static double round(double unrounded, int precision, int roundingMode) {
+        BigDecimal bd = new BigDecimal(unrounded);
+        BigDecimal rounded = bd.setScale(precision, roundingMode);
+        return rounded.doubleValue();
+    }
 }

@@ -16,30 +16,47 @@
         mapbox:mapbox_cameraZoom="15"
         tools:layout_editor_absoluteX="-130dp">
 
-            <SearchView
+        <SearchView
             android:id="@+id/searchView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:layout_constraintTop_toTopOf="parent"
+            android:layout_marginHorizontal="20dp"
             android:layout_marginTop="6dp"
             android:background="@color/white"
-            android:paddingHorizontal="5dp"
-            android:layout_marginHorizontal="20dp"
-            android:queryHint="Search Location"
             android:iconifiedByDefault="false"
-            >
-                <requestFocus />
-            </SearchView>
+            android:paddingHorizontal="5dp"
+            android:queryHint="Search Location"
+            app:layout_constraintTop_toTopOf="parent" />
 
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/locNow"
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="end|bottom"
-            android:layout_marginVertical="60dp"
-            android:layout_marginEnd="30dp"
-            android:src="@drawable/ic_baseline_my_location_24"
-            tools:ignore="ContentDescription" />
+            android:orientation="vertical"
+            android:paddingVertical="6dp"
+            android:gravity="center_horizontal"
+            android:layout_marginBottom="25dp"
+            android:layout_marginHorizontal="20dp"
+            >
+
+            <TextView
+                android:id="@+id/mySpeed"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAlignment="center"
+                android:textSize="18sp"
+                android:layout_marginBottom="8dp"
+                />
+
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/locNow"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_baseline_my_location_24"
+                tools:ignore="ContentDescription" />
+
+        </LinearLayout>
+
     </com.mapbox.mapboxsdk.maps.MapView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
