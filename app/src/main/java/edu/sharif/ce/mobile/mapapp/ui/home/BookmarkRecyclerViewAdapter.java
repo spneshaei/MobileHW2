@@ -25,7 +25,7 @@ public class BookmarkRecyclerViewAdapter extends RecyclerView.Adapter<BookmarkRe
     private ItemClickListener clickListener;
     private ItemClickListener deleteClickListener;
 
-    BookmarkRecyclerViewAdapter(Context context, List<Bookmark> data) {
+    public BookmarkRecyclerViewAdapter(Context context, List<Bookmark> data) {
         this.inflater = LayoutInflater.from(context);
         this.data = data;
     }

@@ -22,10 +22,12 @@ import edu.sharif.ce.mobile.mapapp.R;
 import edu.sharif.ce.mobile.mapapp.model.bookmarkmodel.Bookmark;
 import edu.sharif.ce.mobile.mapapp.model.notifhandling.NotificationCenter;
 import edu.sharif.ce.mobile.mapapp.model.notifhandling.NotificationID;
+import edu.sharif.ce.mobile.mapapp.ui.dashboard.DashboardFragment;
 
 
 public class NetworkInterface {
     private final static String API_KEY_FOR_MAP_BOX = "pk.eyJ1IjoiYWJvb3RzIiwiYSI6ImNrbmtta2JpYjA5aDAyd21wOWhvOXVpc3IifQ.ykVD39lvqcfKuAM03mGWPg";
+    public static ArrayList<String> searchNames=new ArrayList<>();
 
     public static void getLocData(String location) {
         OkHttpClient okHttpClient = new OkHttpClient();
@@ -54,6 +56,7 @@ public class NetworkInterface {
                     Log.d("response", body);
                     try {
                         ArrayList<Bookmark> bookmarks = new ArrayList<>();
+                        ArrayList<String> names = new ArrayList<>();
                         JSONObject outerObj = new JSONObject(body);
                         JSONArray data_array = new JSONArray(outerObj.getString("features"));
                         for (int i = 0; i < data_array.length(); i++) {
@@ -63,7 +66,11 @@ public class NetworkInterface {
                             double lon = (double) inner_object.get(0);
                             double lat = (double) inner_object.get(1);
                             bookmarks.add(new Bookmark(name,lat,lon));
+                            names.add(name);
                         }
+                        searchNames.clear();
+                        searchNames.addAll(names);
+                        NotificationCenter.notify(NotificationID.TopRelatedSearches.NEW_DATA_LOADED_FOR_UI);
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }

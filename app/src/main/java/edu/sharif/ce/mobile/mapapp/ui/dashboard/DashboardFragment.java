@@ -2,9 +2,12 @@ package edu.sharif.ce.mobile.mapapp.ui.dashboard;
 
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -12,6 +15,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
 import android.widget.SearchView;
 import android.widget.TextView;
@@ -22,6 +27,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.mapbox.android.core.permissions.PermissionsListener;
 import com.mapbox.android.core.permissions.PermissionsManager;
@@ -43,14 +49,21 @@ import com.mapbox.mapboxsdk.maps.Style;
 import com.mapbox.mapboxsdk.plugins.markerview.MarkerViewManager;
 
 
+import java.lang.ref.WeakReference;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.List;
 
 import edu.sharif.ce.mobile.mapapp.R;
 import edu.sharif.ce.mobile.mapapp.model.bookmarkmodel.Bookmark;
 import edu.sharif.ce.mobile.mapapp.model.bookmarkmodel.Bookmarker;
+import edu.sharif.ce.mobile.mapapp.model.notifhandling.NotificationCenter;
+import edu.sharif.ce.mobile.mapapp.model.notifhandling.NotificationID;
+import edu.sharif.ce.mobile.mapapp.model.notifhandling.Subscriber;
 import edu.sharif.ce.mobile.mapapp.model.utils.NetworkInterface;
+import edu.sharif.ce.mobile.mapapp.ui.home.BookmarkRecyclerViewAdapter;
+import edu.sharif.ce.mobile.mapapp.ui.home.HomeFragment;
 
 
 public class DashboardFragment extends Fragment implements OnMapReadyCallback, PermissionsListener, GPSCallback {
@@ -66,7 +79,44 @@ public class DashboardFragment extends Fragment implements OnMapReadyCallback, P
     private LocationManager locationManager;
     private double currentSpeed, kmphSpeed;
     private TextView mySpeedText;
+    private AutoCompleteTextView autoCompleteTextView;
+    private static ArrayList<String> searchBookmarks = new ArrayList<>();
+    private ArrayAdapter<String> searchAdapter;
 
+    private final DashboardFragment.WeakHandler handler = new DashboardFragment.WeakHandler(this);
+
+    private static class WeakHandler extends Handler implements Subscriber {
+        private final WeakReference<DashboardFragment> fragment;
+
+        public WeakHandler(DashboardFragment fragment) {
+            this.fragment = new WeakReference<>(fragment);
+        }
+
+        @Override
+        public void handleMessage(Message msg) {
+            DashboardFragment fragment = this.fragment.get();
+            if (fragment != null) {
+                if (msg.what == NotificationID.TopRelatedSearches.NEW_DATA_LOADED_FOR_UI) {
+                    fragment.notifyDataSetChanged();
+                }
+            }
+        }
+    }
+
+    public void notifyDataSetChanged() {
+        if (searchAdapter == null) {
+            searchAdapter = new ArrayAdapter<String>(getActivity(), android.R.layout.select_dialog_item, searchBookmarks);
+        } else {
+            searchBookmarks.clear();
+            searchBookmarks.addAll(NetworkInterface.searchNames);
+            getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    searchAdapter.notifyDataSetChanged();
+                }
+            });
+        }
+    }
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -76,6 +126,7 @@ public class DashboardFragment extends Fragment implements OnMapReadyCallback, P
 
         this.root = inflater.inflate(R.layout.fragment_dashboard, container, false);
 
+        NotificationCenter.registerForNotification(this.handler, NotificationID.TopRelatedSearches.NEW_DATA_LOADED_FOR_UI);
 
         mapView = root.findViewById(R.id.mapView);
         mapView.onCreate(savedInstanceState);
@@ -104,6 +155,7 @@ public class DashboardFragment extends Fragment implements OnMapReadyCallback, P
             }
         });
         searchView = root.findViewById(R.id.searchView);
+        autoCompleteTextView = root.findViewById(R.id.autoCompleteTextView);
 
         try {
             if (ContextCompat.checkSelfPermission(getActivity(), android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -113,8 +165,13 @@ public class DashboardFragment extends Fragment implements OnMapReadyCallback, P
             e.printStackTrace();
         }
 
-
         getCurrentSpeed(getView());
+
+        searchAdapter = new ArrayAdapter<String>(getActivity(), android.R.layout.select_dialog_item, searchBookmarks);
+
+        autoCompleteTextView.setThreshold(5);
+        autoCompleteTextView.setAdapter(searchAdapter);
+        autoCompleteTextView.setTextColor(Color.RED);
 
         return root;
     }
