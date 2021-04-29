@@ -15,6 +15,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -32,6 +33,7 @@ import edu.sharif.ce.mobile.mapapp.model.bookmarkmodel.Bookmarker;
 import edu.sharif.ce.mobile.mapapp.model.notifhandling.NotificationCenter;
 import edu.sharif.ce.mobile.mapapp.model.notifhandling.NotificationID;
 import edu.sharif.ce.mobile.mapapp.model.notifhandling.Subscriber;
+import edu.sharif.ce.mobile.mapapp.ui.dashboard.DashboardFragment;
 
 public class HomeFragment extends Fragment {
 
@@ -87,6 +89,10 @@ public class HomeFragment extends Fragment {
     public void openBookmark(int position) {
         Bookmark bookmark = adapter.getItem(position);
         // TODO: Use that bookmark and open it in the second tab...
+
+        FragmentManager fm = getChildFragmentManager();
+        DashboardFragment fragm = (DashboardFragment)fm.findFragmentById(R.id.navigation_dashboard); //why didn't worked?
+        fragm.showBookMark(bookmark);
         Log.d("BOOKMARKName", bookmark.getName());
     }
 

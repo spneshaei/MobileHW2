@@ -49,6 +49,7 @@ import java.text.DecimalFormat;
 import java.util.List;
 
 import edu.sharif.ce.mobile.mapapp.R;
+import edu.sharif.ce.mobile.mapapp.model.bookmarkmodel.Bookmark;
 import edu.sharif.ce.mobile.mapapp.model.bookmarkmodel.Bookmarker;
 import edu.sharif.ce.mobile.mapapp.model.utils.NetworkInterface;
 
@@ -130,6 +131,13 @@ public class DashboardFragment extends Fragment implements OnMapReadyCallback, P
         } else {
             gpsManager.showSettingsAlert();
         }
+    }
+
+    public void showBookMark(Bookmark bookmark) {
+        mapboxMap.clear();
+        IconFactory iconFactory = IconFactory.getInstance(getContext());
+        Icon icon = iconFactory.fromResource(R.drawable.marker_red3);
+        mapboxMap.addMarker(new MarkerOptions().position(new LatLng(bookmark.getLat(), bookmark.getLon())).icon(icon));
     }
 
     @Override
