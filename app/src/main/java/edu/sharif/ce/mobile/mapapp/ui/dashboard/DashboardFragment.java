@@ -18,6 +18,7 @@ import android.view.WindowManager;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -172,6 +173,14 @@ public class DashboardFragment extends Fragment implements OnMapReadyCallback, P
         autoCompleteTextView.setThreshold(5);
         autoCompleteTextView.setAdapter(searchAdapter);
         autoCompleteTextView.setTextColor(Color.RED);
+
+        ImageView imageView = root.findViewById(R.id.searchLocation);
+        imageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                NetworkInterface.getLocData(autoCompleteTextView.getText().toString());
+            }
+        });
 
         return root;
     }
