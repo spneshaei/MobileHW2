@@ -28,7 +28,6 @@ import com.mapbox.android.core.permissions.PermissionsManager;
 import com.mapbox.mapboxsdk.Mapbox;
 import com.mapbox.mapboxsdk.annotations.Icon;
 import com.mapbox.mapboxsdk.annotations.IconFactory;
-import com.mapbox.mapboxsdk.annotations.Marker;
 import com.mapbox.mapboxsdk.annotations.MarkerOptions;
 import com.mapbox.mapboxsdk.camera.CameraPosition;
 import com.mapbox.mapboxsdk.camera.CameraUpdateFactory;
@@ -53,7 +52,6 @@ import edu.sharif.ce.mobile.mapapp.model.bookmarkmodel.Bookmark;
 import edu.sharif.ce.mobile.mapapp.model.bookmarkmodel.Bookmarker;
 import edu.sharif.ce.mobile.mapapp.model.utils.NetworkInterface;
 
-import static androidx.core.content.ContextCompat.getSystemService;
 
 public class DashboardFragment extends Fragment implements OnMapReadyCallback, PermissionsListener, GPSCallback {
     private PermissionsManager permissionsManager;
@@ -154,11 +152,6 @@ public class DashboardFragment extends Fragment implements OnMapReadyCallback, P
                 Icon icon = iconFactory.fromResource(R.drawable.marker_red3);
 
                 mapboxMap.addMarker(new MarkerOptions().position(new LatLng(point.getLatitude(), point.getLongitude())).icon(icon));
-//                View customView = LayoutInflater.from(getActivity()).inflate(
-//                        R.layout.fragment_dashboard, null);
-//                MarkerView markerView = new MarkerView(point, customView);
-//                markerViewManager.addMarker(markerView);
-//                markerViewManager.removeMarker(markerView);
 
                 AlertDialog.Builder alert = new AlertDialog.Builder(getContext());
                 final EditText edittext = new EditText(getContext());
