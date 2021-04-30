@@ -10,6 +10,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,6 +25,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -105,18 +107,14 @@ public class DashboardFragment extends Fragment implements OnMapReadyCallback, P
     }
 
     public void notifyDataSetChanged() {
-        if (searchAdapter == null) {
-            searchAdapter = new ArrayAdapter<String>(getActivity(), android.R.layout.select_dialog_item, searchBookmarks);
-        } else {
-            searchBookmarks.clear();
-            searchBookmarks.addAll(NetworkInterface.searchNames);
-            getActivity().runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    searchAdapter.notifyDataSetChanged();
-                }
-            });
-        }
+        searchBookmarks.clear();
+        searchBookmarks.addAll(NetworkInterface.searchNames);
+        searchAdapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_dropdown_item_1line, searchBookmarks);
+        autoCompleteTextView.setAdapter(searchAdapter);
+        System.out.println(searchAdapter.getCount());
+        System.out.println(searchBookmarks.size());
+        System.out.println(NetworkInterface.searchNames.size());
+        autoCompleteTextView.showDropDown();
     }
 
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -157,7 +155,6 @@ public class DashboardFragment extends Fragment implements OnMapReadyCallback, P
         });
         searchView = root.findViewById(R.id.searchView);
         autoCompleteTextView = root.findViewById(R.id.autoCompleteTextView);
-
         try {
             if (ContextCompat.checkSelfPermission(getActivity(), android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                 ActivityCompat.requestPermissions(getActivity(), new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION}, 101);
@@ -168,12 +165,6 @@ public class DashboardFragment extends Fragment implements OnMapReadyCallback, P
 
         getCurrentSpeed(getView());
 
-        searchAdapter = new ArrayAdapter<String>(getActivity(), android.R.layout.select_dialog_item, searchBookmarks);
-
-        autoCompleteTextView.setThreshold(5);
-        autoCompleteTextView.setAdapter(searchAdapter);
-        autoCompleteTextView.setTextColor(Color.RED);
-
         ImageView imageView = root.findViewById(R.id.searchLocation);
         imageView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -183,6 +174,13 @@ public class DashboardFragment extends Fragment implements OnMapReadyCallback, P
         });
 
         return root;
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        searchAdapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_dropdown_item_1line, searchBookmarks);
+        autoCompleteTextView.setAdapter(searchAdapter);
     }
 
     public void getCurrentSpeed(View view) {

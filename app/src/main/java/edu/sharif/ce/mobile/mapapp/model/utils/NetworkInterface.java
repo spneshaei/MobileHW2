@@ -63,13 +63,14 @@ public class NetworkInterface {
                             JSONObject object = (JSONObject) data_array.get(i);
                             JSONArray inner_object = object.getJSONArray("center");
                             String name = object.getString("place_name");
-                            double lon = (double) inner_object.get(0);
-                            double lat = (double) inner_object.get(1);
+                            double lon = Double.parseDouble(String.valueOf(inner_object.get(0)));
+                            double lat = Double.parseDouble(String.valueOf(inner_object.get(1)));
                             bookmarks.add(new Bookmark(name,lat,lon));
                             names.add(name);
                         }
                         searchNames.clear();
                         searchNames.addAll(names);
+                        System.out.println(searchNames);
                         NotificationCenter.notify(NotificationID.TopRelatedSearches.NEW_DATA_LOADED_FOR_UI);
                     } catch (JSONException e) {
                         e.printStackTrace();
