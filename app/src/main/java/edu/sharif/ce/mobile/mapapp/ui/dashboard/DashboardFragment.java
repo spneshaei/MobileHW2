@@ -75,7 +75,6 @@ public class DashboardFragment extends Fragment implements OnMapReadyCallback, P
     private MarkerViewManager markerViewManager;
     private MapView mapView;
     private View root;
-    private SearchView searchView;
     private GPSManager gpsManager = null;
     private double speed = 0.0;
     private Boolean isGPSEnabled = false;
@@ -83,7 +82,7 @@ public class DashboardFragment extends Fragment implements OnMapReadyCallback, P
     private double currentSpeed, kmphSpeed;
     private TextView mySpeedText;
     private AutoCompleteTextView autoCompleteTextView;
-    private static ArrayList<String> searchBookmarks = new ArrayList<>();
+    private static final ArrayList<String> searchBookmarks = new ArrayList<>();
     private PlaceAdapter searchAdapter;
 
     private final DashboardFragment.WeakHandler handler = new DashboardFragment.WeakHandler(this);
@@ -149,7 +148,6 @@ public class DashboardFragment extends Fragment implements OnMapReadyCallback, P
 
             }
         });
-        searchView = root.findViewById(R.id.searchView);
         autoCompleteTextView = root.findViewById(R.id.autoCompleteTextView);
         try {
             if (ContextCompat.checkSelfPermission(getActivity(), android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -254,25 +252,6 @@ public class DashboardFragment extends Fragment implements OnMapReadyCallback, P
                         enableLocationComponent(style);
                     }
                 });
-
-
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String query) {
-                searchView.clearFocus();
-                Log.d("hi", query);
-                if (query != null) {
-                    NetworkInterface.getLocData(query);
-                    return true;
-                }
-                return false;
-            }
-
-            @Override
-            public boolean onQueryTextChange(String newText) {
-                return false;
-            }
-        });
     }
 
     @SuppressWarnings({"MissingPermission"})
