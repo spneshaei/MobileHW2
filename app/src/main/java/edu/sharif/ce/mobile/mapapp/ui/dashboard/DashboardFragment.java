@@ -84,7 +84,7 @@ public class DashboardFragment extends Fragment implements OnMapReadyCallback, P
     private TextView mySpeedText;
     private AutoCompleteTextView autoCompleteTextView;
     private static ArrayList<String> searchBookmarks = new ArrayList<>();
-    private ArrayAdapter<String> searchAdapter;
+    private PlaceAdapter searchAdapter;
 
     private final DashboardFragment.WeakHandler handler = new DashboardFragment.WeakHandler(this);
 
@@ -109,11 +109,7 @@ public class DashboardFragment extends Fragment implements OnMapReadyCallback, P
     public void notifyDataSetChanged() {
         searchBookmarks.clear();
         searchBookmarks.addAll(NetworkInterface.searchNames);
-        searchAdapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_dropdown_item_1line, searchBookmarks);
-        autoCompleteTextView.setAdapter(searchAdapter);
-        System.out.println(searchAdapter.getCount());
-        System.out.println(searchBookmarks.size());
-        System.out.println(NetworkInterface.searchNames.size());
+        searchAdapter.notifyDataSetChanged();
         autoCompleteTextView.showDropDown();
     }
 
@@ -179,7 +175,7 @@ public class DashboardFragment extends Fragment implements OnMapReadyCallback, P
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        searchAdapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_dropdown_item_1line, searchBookmarks);
+        searchAdapter = new PlaceAdapter(getContext(), android.R.layout.simple_dropdown_item_1line, searchBookmarks);
         autoCompleteTextView.setAdapter(searchAdapter);
     }
 
