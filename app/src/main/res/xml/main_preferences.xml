@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <SwitchPreferenceCompat
+        app:key="darkMode"
+        app:title="Dark Mode"
+        app:summary="Toggle Dark Mode"/>
+
+    <Preference
+        app:key="clearData"
+        app:title="Delete Data"
+        app:summary="Delete App Data From Your Phone"/>
+
+</PreferenceScreen>

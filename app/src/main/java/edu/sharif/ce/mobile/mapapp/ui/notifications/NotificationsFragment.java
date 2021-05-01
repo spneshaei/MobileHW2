@@ -1,46 +1,86 @@
 package edu.sharif.ce.mobile.mapapp.ui.notifications;
 
+import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.TextView;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProvider;
+import androidx.appcompat.app.AppCompatDelegate;
+import androidx.preference.Preference;
+import androidx.preference.PreferenceFragmentCompat;
+
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import java.util.UUID;
 
 import edu.sharif.ce.mobile.mapapp.R;
-import edu.sharif.ce.mobile.mapapp.model.bookmarkmodel.Bookmark;
 import edu.sharif.ce.mobile.mapapp.model.bookmarkmodel.Bookmarker;
 
-public class NotificationsFragment extends Fragment {
+public class NotificationsFragment extends PreferenceFragmentCompat implements SharedPreferences.OnSharedPreferenceChangeListener, Preference.OnPreferenceClickListener {
 
-    public View onCreateView(@NonNull LayoutInflater inflater,
-                             ViewGroup container, Bundle savedInstanceState) {
-        View root = inflater.inflate(R.layout.fragment_notifications, container, false);
-        final Button btnAddRandomBookmark = root.findViewById(R.id.btnAddRandomBookmark);
-        final Button btnClearData = root.findViewById(R.id.btnClearAllData);
-        btnAddRandomBookmark.setOnClickListener(view -> insertRandomBookmark());
-        btnClearData.setOnClickListener(view -> clearData());
-        return root;
+    @Override
+    public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
+        setPreferencesFromResource(R.xml.main_preferences, rootKey);
+
     }
 
-    public void clearData() {
-        // TODO: Alert view before cleaning!
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        getPreferenceScreen().getSharedPreferences()
+                .registerOnSharedPreferenceChangeListener(this);
+        Preference preference = getPreferenceManager().findPreference("clearData");
+        preference.setOnPreferenceClickListener(this);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        getPreferenceScreen().getSharedPreferences()
+                .unregisterOnSharedPreferenceChangeListener(this);
+    }
+
+    public void showEraseDialog() {
+        MaterialAlertDialogBuilder dialogBuilder = new MaterialAlertDialogBuilder(getContext());
+        dialogBuilder.setTitle("Clear All Data")
+                .setMessage("All your data will be erased. Proceed?")
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        eraseAllData();
+                    }
+                });
+        dialogBuilder.show();
+    }
+
+    private void eraseAllData () {
         Bookmarker.deleteAllBookmarks(getContext());
-        // TODO: Also delete SharedPrefs
-        // getContext().getSharedPreferences("YOUR_PREFS", 0).edit().clear().commit();
+        getPreferenceScreen().getSharedPreferences()
+                .edit().putBoolean("darkMode", false).apply();
         // TODO: Also delete caches
         // TODO: Rotation problem in app!!!
     }
 
     public void insertRandomBookmark() {
         Bookmarker.insertBookmark(getContext(), UUID.randomUUID().toString(), 1.0, 2.0);
+    }
+
+    @Override
+    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+        if (key.equals("darkMode")) {
+            if (sharedPreferences.getBoolean(key, false))
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+            else
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+        }
+    }
+
+    @Override
+    public boolean onPreferenceClick(Preference preference) {
+        if (preference.getKey().equals("clearData")) {
+            showEraseDialog();
+            return true;
+        }
+        return false;
     }
 }

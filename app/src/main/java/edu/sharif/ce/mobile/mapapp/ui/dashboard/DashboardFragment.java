@@ -331,7 +331,8 @@ public class DashboardFragment extends Fragment implements OnMapReadyCallback, P
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        mapView.onSaveInstanceState(outState);
+        if (mapView != null)
+            mapView.onSaveInstanceState(outState);
     }
 
     @Override
