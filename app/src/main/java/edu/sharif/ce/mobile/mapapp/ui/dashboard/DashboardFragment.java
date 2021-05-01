@@ -226,7 +226,7 @@ public class DashboardFragment extends Fragment implements OnMapReadyCallback, P
                     }
                 });
 
-                alert.setNegativeButton("Cancle", new DialogInterface.OnClickListener() {
+                alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
                         mapboxMap.clear();
                     }
