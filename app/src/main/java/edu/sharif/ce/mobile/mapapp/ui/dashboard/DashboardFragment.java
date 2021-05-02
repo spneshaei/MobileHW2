@@ -134,16 +134,7 @@ public class DashboardFragment extends Fragment implements OnMapReadyCallback, P
                 Location lastKnownLocation = mapboxMap.getLocationComponent().getLastKnownLocation();
 
                 if (lastKnownLocation != null) {
-
-                    CameraPosition position = new CameraPosition.Builder()
-                            .target(new LatLng(lastKnownLocation.getLatitude(), lastKnownLocation.getLongitude())) // Sets the new camera position
-                            .zoom(15)
-                            .bearing(0)
-                            .tilt(0)
-                            .build(); // Creates a CameraPosition from the builder
-
-                    mapboxMap.animateCamera(CameraUpdateFactory
-                            .newCameraPosition(position), 1000);
+                    animateCamera(lastKnownLocation.getLatitude(), lastKnownLocation.getLongitude());
                 }
 
             }
@@ -163,7 +154,12 @@ public class DashboardFragment extends Fragment implements OnMapReadyCallback, P
         imageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                NetworkInterface.getLocData(autoCompleteTextView.getText().toString());
+                String text = autoCompleteTextView.getText().toString();
+                Bookmark bookmark = Bookmark.getBookmarkByName(text, NetworkInterface.searchBookmarks);
+                if (bookmark == null)
+                    NetworkInterface.getLocData(text);
+                else
+                    showBookMark(bookmark);
             }
         });
 
@@ -194,6 +190,18 @@ public class DashboardFragment extends Fragment implements OnMapReadyCallback, P
         IconFactory iconFactory = IconFactory.getInstance(getContext());
         Icon icon = iconFactory.fromResource(R.drawable.marker_red3);
         mapboxMap.addMarker(new MarkerOptions().position(new LatLng(bookmark.getLat(), bookmark.getLon())).icon(icon));
+        animateCamera(bookmark.getLat(), bookmark.getLon());
+    }
+
+    public void animateCamera(double lat, double lon) {
+        CameraPosition position = new CameraPosition.Builder()
+                .target(new LatLng(lat, lon))
+                .zoom(15)
+                .bearing(0)
+                .tilt(0)
+                .build();
+        mapboxMap.animateCamera(CameraUpdateFactory
+                .newCameraPosition(position), 1000);
     }
 
     @Override

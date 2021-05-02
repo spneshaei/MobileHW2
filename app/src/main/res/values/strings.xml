@@ -8,4 +8,5 @@
     <string name="delete_bookmark_message">Are you sure you want to delete this bookmark?</string>
     <string name="proceed_button">Proceed</string>
     <string name="no_bookmarks_text">No Bookmarks Here :)</string>
+    <string name="search_location">Search Location</string>
 </resources>

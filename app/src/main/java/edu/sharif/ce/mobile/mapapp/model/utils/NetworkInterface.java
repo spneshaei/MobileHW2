@@ -27,7 +27,8 @@ import edu.sharif.ce.mobile.mapapp.ui.dashboard.DashboardFragment;
 
 public class NetworkInterface {
     private final static String API_KEY_FOR_MAP_BOX = "pk.eyJ1IjoiYWJvb3RzIiwiYSI6ImNrbmtta2JpYjA5aDAyd21wOWhvOXVpc3IifQ.ykVD39lvqcfKuAM03mGWPg";
-    public static ArrayList<String> searchNames=new ArrayList<>();
+    public static ArrayList<String> searchNames = new ArrayList<>();
+    public static ArrayList<Bookmark> searchBookmarks = new ArrayList<>();
 
     public static void getLocData(String location) {
         OkHttpClient okHttpClient = new OkHttpClient();
@@ -65,12 +66,14 @@ public class NetworkInterface {
                             String name = object.getString("place_name");
                             double lon = Double.parseDouble(String.valueOf(inner_object.get(0)));
                             double lat = Double.parseDouble(String.valueOf(inner_object.get(1)));
-                            bookmarks.add(new Bookmark(name,lat,lon));
+                            bookmarks.add(new Bookmark(name, lat, lon));
                             names.add(name);
                         }
                         searchNames.clear();
                         searchNames.addAll(names);
                         System.out.println(searchNames);
+                        searchBookmarks.clear();
+                        searchBookmarks.addAll(bookmarks);
                         NotificationCenter.notify(NotificationID.TopRelatedSearches.NEW_DATA_LOADED_FOR_UI);
                     } catch (JSONException e) {
                         e.printStackTrace();

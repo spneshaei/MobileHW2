@@ -5,6 +5,8 @@ import androidx.room.Entity;
 import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
+import java.util.List;
+
 /**
  * Created by Seyyed Parsa Neshaei on 4/15/21
  * All Rights Reserved
@@ -49,5 +51,13 @@ public class Bookmark {
         this.name = name;
         this.lat = lat;
         this.lon = lon;
+    }
+
+    public static Bookmark getBookmarkByName(String name, List<Bookmark> bookmarks) {
+        for (Bookmark bookmark : bookmarks) {
+            if (bookmark.name.equals(name))
+                return bookmark;
+        }
+        return null;
     }
 }
