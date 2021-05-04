@@ -1,7 +1,6 @@
 package edu.sharif.ce.mobile.mapapp.ui.home;
 
 import android.content.Context;
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -12,17 +11,12 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
-import com.google.android.material.snackbar.Snackbar;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -91,7 +85,7 @@ public class HomeFragment extends Fragment {
         // TODO: Use that bookmark and open it in the second tab...
 
         FragmentManager fm = getChildFragmentManager();
-        DashboardFragment fragm = (DashboardFragment)fm.findFragmentById(R.id.navigation_dashboard); //why didn't worked?
+        DashboardFragment fragm = (DashboardFragment) fm.findFragmentById(R.id.navigation_dashboard); //why didn't worked?
         fragm.showBookMark(bookmark);
         Log.d("BOOKMARKName", bookmark.getName());
     }
@@ -99,6 +93,7 @@ public class HomeFragment extends Fragment {
     public void deleteBookmark(Bookmark bookmark) {
         Bookmarker.deleteBookmark(getContext(), bookmark);
     }
+
 
     private void showDeleteAlertDialog(int position) {
         Bookmark bookmark = adapter.getItem(position);

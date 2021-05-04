@@ -1,17 +1,24 @@
 package edu.sharif.ce.mobile.mapapp.ui.dashboard;
 
+import android.Manifest;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.speech.RecognitionListener;
+import android.speech.RecognizerIntent;
+import android.speech.SpeechRecognizer;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
@@ -57,6 +64,8 @@ import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
+import java.util.Objects;
 
 import edu.sharif.ce.mobile.mapapp.R;
 import edu.sharif.ce.mobile.mapapp.model.bookmarkmodel.Bookmark;
@@ -84,6 +93,10 @@ public class DashboardFragment extends Fragment implements OnMapReadyCallback, P
     private AutoCompleteTextView autoCompleteTextView;
     private static final ArrayList<String> searchBookmarks = new ArrayList<>();
     private PlaceAdapter searchAdapter;
+    public static final Integer RecordAudioRequestCode = 1;
+    private ImageView speechToTextImg;
+    private SpeechRecognizer speechRecognizer;
+
 
     private final DashboardFragment.WeakHandler handler = new DashboardFragment.WeakHandler(this);
 
@@ -163,7 +176,89 @@ public class DashboardFragment extends Fragment implements OnMapReadyCallback, P
             }
         });
 
+        speechToTextImg = root.findViewById(R.id.voiceImg);
+
+        if(ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED){
+            checkPermission();
+        }
+
+        speechRecognizer = SpeechRecognizer.createSpeechRecognizer(getContext());
+
+        final Intent speechRecognizerIntent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+        speechRecognizerIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+        speechRecognizerIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault());
+
+        speechRecognizer.setRecognitionListener(new RecognitionListener() {
+            @Override
+            public void onReadyForSpeech(Bundle bundle) {
+
+            }
+
+            @Override
+            public void onBeginningOfSpeech() {
+                autoCompleteTextView.setText("");
+                autoCompleteTextView.setHint("Listening...");
+            }
+
+            @Override
+            public void onRmsChanged(float v) {
+
+            }
+
+            @Override
+            public void onBufferReceived(byte[] bytes) {
+
+            }
+
+            @Override
+            public void onEndOfSpeech() {
+
+            }
+
+            @Override
+            public void onError(int i) {
+                Log.e("mic","error happened");
+            }
+
+            @Override
+            public void onResults(Bundle bundle) {
+                speechToTextImg.setImageResource(R.drawable.ic_baseline_mic_24);
+                ArrayList<String> data = bundle.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION);
+                autoCompleteTextView.setText(data.get(0));
+            }
+
+            @Override
+            public void onPartialResults(Bundle bundle) {
+
+            }
+
+            @Override
+            public void onEvent(int i, Bundle bundle) {
+
+            }
+        });
+
+        speechToTextImg.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                if (motionEvent.getAction() == MotionEvent.ACTION_UP){
+                    speechRecognizer.stopListening();
+                }
+                if (motionEvent.getAction() == MotionEvent.ACTION_DOWN){
+                    speechToTextImg.setImageResource(R.drawable.ic_baseline_mic_24);
+                    speechRecognizer.startListening(speechRecognizerIntent);
+                }
+                return false;
+            }
+        });
+
         return root;
+    }
+
+    private void checkPermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            ActivityCompat.requestPermissions(getActivity(),new String[]{Manifest.permission.RECORD_AUDIO},RecordAudioRequestCode);
+        }
     }
 
     @Override
@@ -221,6 +316,8 @@ public class DashboardFragment extends Fragment implements OnMapReadyCallback, P
 
                 AlertDialog.Builder alert = new AlertDialog.Builder(getContext());
                 final EditText edittext = new EditText(getContext());
+                edittext.setPadding(40,10,10,10);
+                edittext.setHint("type location name here.");
                 alert.setMessage("Location Name");
                 DecimalFormat df = new DecimalFormat("#.##");
 
@@ -261,6 +358,7 @@ public class DashboardFragment extends Fragment implements OnMapReadyCallback, P
                     }
                 });
     }
+
 
     @SuppressWarnings({"MissingPermission"})
     private void enableLocationComponent(@NonNull Style loadedMapStyle) {
@@ -359,6 +457,8 @@ public class DashboardFragment extends Fragment implements OnMapReadyCallback, P
         gpsManager.stopListening();
         gpsManager.setGPSCallback(null);
         gpsManager = null;
+
+        speechRecognizer.destroy();
     }
 
 

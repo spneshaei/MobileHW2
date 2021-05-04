@@ -42,10 +42,20 @@
 
             <ImageView
                 android:id="@+id/searchLocation"
-                android:layout_width="28dp"
-                android:layout_height="28dp"
-                android:layout_marginEnd="22dp"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_marginEnd="20dp"
                 android:src="@drawable/ic_baseline_search_24"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <ImageView
+                android:id="@+id/voiceImg"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_marginEnd="54dp"
+                android:src="@drawable/ic_baseline_mic_24"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
