@@ -178,14 +178,14 @@ public class DashboardFragment extends Fragment implements OnMapReadyCallback, P
 
         speechToTextImg = root.findViewById(R.id.voiceImg);
 
-        if(ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED){
+        if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
             checkPermission();
         }
 
         speechRecognizer = SpeechRecognizer.createSpeechRecognizer(getContext());
 
         final Intent speechRecognizerIntent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
-        speechRecognizerIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+        speechRecognizerIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
         speechRecognizerIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault());
 
         speechRecognizer.setRecognitionListener(new RecognitionListener() {
@@ -217,7 +217,7 @@ public class DashboardFragment extends Fragment implements OnMapReadyCallback, P
 
             @Override
             public void onError(int i) {
-                Log.e("mic","error happened");
+                Log.e("mic", "error happened");
             }
 
             @Override
@@ -238,17 +238,28 @@ public class DashboardFragment extends Fragment implements OnMapReadyCallback, P
             }
         });
 
-        speechToTextImg.setOnTouchListener(new View.OnTouchListener() {
+//        speechToTextImg.setOnTouchListener(new View.OnTouchListener() {
+//            @Override
+//            public boolean onTouch(View view, MotionEvent motionEvent) {
+//                if (motionEvent.getAction() == MotionEvent.ACTION_UP){
+//                    speechRecognizer.stopListening();
+//                }
+//                if (motionEvent.getAction() == MotionEvent.ACTION_DOWN){
+//                    speechToTextImg.setImageResource(R.drawable.ic_baseline_mic_24);
+//                    speechRecognizer.startListening(speechRecognizerIntent);
+//                }
+//                return false;
+//            }
+//        });
+        speechToTextImg.setOnClickListener(new View.OnClickListener() {
             @Override
-            public boolean onTouch(View view, MotionEvent motionEvent) {
-                if (motionEvent.getAction() == MotionEvent.ACTION_UP){
-                    speechRecognizer.stopListening();
-                }
-                if (motionEvent.getAction() == MotionEvent.ACTION_DOWN){
-                    speechToTextImg.setImageResource(R.drawable.ic_baseline_mic_24);
-                    speechRecognizer.startListening(speechRecognizerIntent);
-                }
-                return false;
+            public void onClick(View view) {
+                Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+                intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
+                        RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+                intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault());
+                intent.putExtra(RecognizerIntent.EXTRA_PROMPT, "Need to speak");
+                startActivityForResult(speechRecognizerIntent, RecordAudioRequestCode);
             }
         });
 
@@ -257,7 +268,7 @@ public class DashboardFragment extends Fragment implements OnMapReadyCallback, P
 
     private void checkPermission() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            ActivityCompat.requestPermissions(getActivity(),new String[]{Manifest.permission.RECORD_AUDIO},RecordAudioRequestCode);
+            ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.RECORD_AUDIO}, RecordAudioRequestCode);
         }
     }
 
@@ -316,7 +327,7 @@ public class DashboardFragment extends Fragment implements OnMapReadyCallback, P
 
                 AlertDialog.Builder alert = new AlertDialog.Builder(getContext());
                 final EditText edittext = new EditText(getContext());
-                edittext.setPadding(40,10,10,10);
+                edittext.setPadding(40, 10, 10, 10);
                 edittext.setHint("type location name here.");
                 alert.setMessage("Location Name");
                 DecimalFormat df = new DecimalFormat("#.##");
@@ -476,4 +487,18 @@ public class DashboardFragment extends Fragment implements OnMapReadyCallback, P
         BigDecimal rounded = bd.setScale(precision, roundingMode);
         return rounded.doubleValue();
     }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == RecordAudioRequestCode) {
+            if (data != null){
+                ArrayList<String> result = data
+                        .getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
+                autoCompleteTextView.setText(result.get(0));
+            }
+        }
+    }
+
+
 }
