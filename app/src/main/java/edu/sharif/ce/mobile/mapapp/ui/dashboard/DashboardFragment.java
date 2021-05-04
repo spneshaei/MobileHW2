@@ -185,61 +185,61 @@ public class DashboardFragment extends Fragment implements OnMapReadyCallback, P
             checkPermission();
         }
 
-        speechRecognizer = SpeechRecognizer.createSpeechRecognizer(getContext());
-
-        final Intent speechRecognizerIntent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
-        speechRecognizerIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
-        speechRecognizerIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault());
-
-        speechRecognizer.setRecognitionListener(new RecognitionListener() {
-            @Override
-            public void onReadyForSpeech(Bundle bundle) {
-
-            }
-
-            @Override
-            public void onBeginningOfSpeech() {
-                autoCompleteTextView.setText("");
-                autoCompleteTextView.setHint("Listening...");
-            }
-
-            @Override
-            public void onRmsChanged(float v) {
-
-            }
-
-            @Override
-            public void onBufferReceived(byte[] bytes) {
-
-            }
-
-            @Override
-            public void onEndOfSpeech() {
-
-            }
-
-            @Override
-            public void onError(int i) {
-                Log.e("mic", "error happened");
-            }
-
-            @Override
-            public void onResults(Bundle bundle) {
-                speechToTextImg.setImageResource(R.drawable.ic_baseline_mic_24);
-                ArrayList<String> data = bundle.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION);
-                autoCompleteTextView.setText(data.get(0));
-            }
-
-            @Override
-            public void onPartialResults(Bundle bundle) {
-
-            }
-
-            @Override
-            public void onEvent(int i, Bundle bundle) {
-
-            }
-        });
+//        speechRecognizer = SpeechRecognizer.createSpeechRecognizer(getContext());
+//
+//        final Intent speechRecognizerIntent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+//        speechRecognizerIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+//        speechRecognizerIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault());
+//
+//        speechRecognizer.setRecognitionListener(new RecognitionListener() {
+//            @Override
+//            public void onReadyForSpeech(Bundle bundle) {
+//
+//            }
+//
+//            @Override
+//            public void onBeginningOfSpeech() {
+//                autoCompleteTextView.setText("");
+//                autoCompleteTextView.setHint("Listening...");
+//            }
+//
+//            @Override
+//            public void onRmsChanged(float v) {
+//
+//            }
+//
+//            @Override
+//            public void onBufferReceived(byte[] bytes) {
+//
+//            }
+//
+//            @Override
+//            public void onEndOfSpeech() {
+//
+//            }
+//
+//            @Override
+//            public void onError(int i) {
+//                Log.e("mic", "error happened");
+//            }
+//
+//            @Override
+//            public void onResults(Bundle bundle) {
+//                speechToTextImg.setImageResource(R.drawable.ic_baseline_mic_24);
+//                ArrayList<String> data = bundle.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION);
+//                autoCompleteTextView.setText(data.get(0));
+//            }
+//
+//            @Override
+//            public void onPartialResults(Bundle bundle) {
+//
+//            }
+//
+//            @Override
+//            public void onEvent(int i, Bundle bundle) {
+//
+//            }
+//        });
 
 //        speechToTextImg.setOnTouchListener(new View.OnTouchListener() {
 //            @Override
@@ -263,7 +263,7 @@ public class DashboardFragment extends Fragment implements OnMapReadyCallback, P
                 intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault());
                 intent.putExtra(RecognizerIntent.EXTRA_PROMPT, "Say something");
                 if (intent.resolveActivity(getActivity().getPackageManager()) != null) {
-                    startActivityForResult(speechRecognizerIntent, REQUEST_CODE_SPEECH_INTENT);
+                    startActivityForResult(intent, REQUEST_CODE_SPEECH_INTENT);
                 } else {
                     Toast.makeText(getActivity(), "your device doesn't support speech input", Toast.LENGTH_LONG).show();
                 }
