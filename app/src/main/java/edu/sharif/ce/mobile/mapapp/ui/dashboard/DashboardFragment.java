@@ -77,6 +77,8 @@ import edu.sharif.ce.mobile.mapapp.model.utils.NetworkInterface;
 import edu.sharif.ce.mobile.mapapp.ui.home.BookmarkRecyclerViewAdapter;
 import edu.sharif.ce.mobile.mapapp.ui.home.HomeFragment;
 
+import static android.app.Activity.RESULT_OK;
+
 
 public class DashboardFragment extends Fragment implements OnMapReadyCallback, PermissionsListener, GPSCallback {
     private PermissionsManager permissionsManager;
@@ -94,6 +96,7 @@ public class DashboardFragment extends Fragment implements OnMapReadyCallback, P
     private static final ArrayList<String> searchBookmarks = new ArrayList<>();
     private PlaceAdapter searchAdapter;
     public static final Integer RecordAudioRequestCode = 1;
+    public static final int REQUEST_CODE_SPEECH_INTENT = 1000;
     private ImageView speechToTextImg;
     private SpeechRecognizer speechRecognizer;
 
@@ -258,8 +261,12 @@ public class DashboardFragment extends Fragment implements OnMapReadyCallback, P
                 intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
                         RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
                 intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault());
-                intent.putExtra(RecognizerIntent.EXTRA_PROMPT, "Need to speak");
-                startActivityForResult(speechRecognizerIntent, RecordAudioRequestCode);
+                intent.putExtra(RecognizerIntent.EXTRA_PROMPT, "Say something");
+                if (intent.resolveActivity(getActivity().getPackageManager()) != null) {
+                    startActivityForResult(speechRecognizerIntent, REQUEST_CODE_SPEECH_INTENT);
+                } else {
+                    Toast.makeText(getActivity(), "your device doesn't support speech input", Toast.LENGTH_LONG).show();
+                }
             }
         });
 
@@ -329,6 +336,7 @@ public class DashboardFragment extends Fragment implements OnMapReadyCallback, P
                 final EditText edittext = new EditText(getContext());
                 edittext.setPadding(40, 10, 10, 10);
                 edittext.setHint("type location name here.");
+                edittext.setMaxLines(1);
                 alert.setMessage("Location Name");
                 DecimalFormat df = new DecimalFormat("#.##");
 
@@ -491,8 +499,8 @@ public class DashboardFragment extends Fragment implements OnMapReadyCallback, P
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == RecordAudioRequestCode) {
-            if (data != null){
+        if (requestCode == REQUEST_CODE_SPEECH_INTENT) {
+            if (data != null && resultCode == RESULT_OK) {
                 ArrayList<String> result = data
                         .getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
                 autoCompleteTextView.setText(result.get(0));
