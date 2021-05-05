@@ -23,6 +23,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
@@ -284,6 +285,14 @@ public class DashboardFragment extends Fragment implements OnMapReadyCallback, P
         super.onViewCreated(view, savedInstanceState);
         searchAdapter = new PlaceAdapter(getContext(), android.R.layout.simple_dropdown_item_1line, searchBookmarks);
         autoCompleteTextView.setAdapter(searchAdapter);
+        autoCompleteTextView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                String selected = (String) adapterView.getItemAtPosition(i);
+                Bookmark bookmark = Bookmark.getBookmarkByName(selected, NetworkInterface.searchBookmarks);
+                showBookMark(bookmark);
+            }
+        });
     }
 
     public void getCurrentSpeed(View view) {
