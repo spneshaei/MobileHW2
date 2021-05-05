@@ -477,7 +477,8 @@ public class DashboardFragment extends Fragment implements OnMapReadyCallback, P
         gpsManager.setGPSCallback(null);
         gpsManager = null;
 
-        speechRecognizer.destroy();
+        if (speechRecognizer != null)
+            speechRecognizer.destroy();
     }
 
 
