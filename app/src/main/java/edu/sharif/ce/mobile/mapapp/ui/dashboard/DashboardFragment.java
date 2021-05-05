@@ -340,13 +340,13 @@ public class DashboardFragment extends Fragment implements OnMapReadyCallback, P
                 alert.setMessage("Location Name");
                 DecimalFormat df = new DecimalFormat("#.##");
 
-                alert.setTitle("Save Location (" + df.format(point.getLatitude()) + ", " + df.format(point.getAltitude()) + ")");
+                alert.setTitle("Save Location (" + df.format(point.getLatitude()) + ", " + df.format(point.getLongitude()) + ")");
                 alert.setView(edittext);
 
                 alert.setPositiveButton("Save", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
                         String editTextValue = edittext.getText().toString();
-                        Bookmarker.insertBookmark(getContext(), editTextValue, point.getLatitude(), point.getAltitude());
+                        Bookmarker.insertBookmark(getContext(), editTextValue, point.getLatitude(), point.getLongitude());
                     }
                 });
 
