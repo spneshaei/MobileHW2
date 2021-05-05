@@ -144,16 +144,10 @@ public class DashboardFragment extends Fragment implements OnMapReadyCallback, P
         mapView.getMapAsync(this);
         mySpeedText = root.findViewById(R.id.mySpeed);
 
-        root.findViewById(R.id.locNow).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                Location lastKnownLocation = mapboxMap.getLocationComponent().getLastKnownLocation();
-
-                if (lastKnownLocation != null) {
-                    animateCamera(lastKnownLocation.getLatitude(), lastKnownLocation.getLongitude());
-                }
-
+        root.findViewById(R.id.locNow).setOnClickListener(view -> {
+            Location lastKnownLocation = mapboxMap.getLocationComponent().getLastKnownLocation();
+            if (lastKnownLocation != null) {
+                animateCamera(lastKnownLocation.getLatitude(), lastKnownLocation.getLongitude());
             }
         });
         autoCompleteTextView = root.findViewById(R.id.autoCompleteTextView);
@@ -168,21 +162,18 @@ public class DashboardFragment extends Fragment implements OnMapReadyCallback, P
         getCurrentSpeed(getView());
 
         ImageView imageView = root.findViewById(R.id.searchLocation);
-        imageView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                String text = autoCompleteTextView.getText().toString();
-                Bookmark bookmark = Bookmark.getBookmarkByName(text, NetworkInterface.searchBookmarks);
-                if (bookmark == null)
-                    NetworkInterface.getLocData(text);
-                else
-                    showBookMark(bookmark);
-            }
+        imageView.setOnClickListener(view -> {
+            String text = autoCompleteTextView.getText().toString();
+            Bookmark bookmark = Bookmark.getBookmarkByName(text, NetworkInterface.searchBookmarks);
+            if (bookmark == null) NetworkInterface.getLocData(text);
+            else showBookMark(bookmark);
         });
 
         speechToTextImg = root.findViewById(R.id.voiceImg);
 
-        if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
+        if (getActivity() != null &&
+                ContextCompat.checkSelfPermission(getActivity(),
+                        Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
             checkPermission();
         }
 
@@ -266,7 +257,7 @@ public class DashboardFragment extends Fragment implements OnMapReadyCallback, P
                 if (intent.resolveActivity(getActivity().getPackageManager()) != null) {
                     startActivityForResult(intent, REQUEST_CODE_SPEECH_INTENT);
                 } else {
-                    Toast.makeText(getActivity(), "your device doesn't support speech input", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getActivity(), "Your device doesn't support speech input", Toast.LENGTH_LONG).show();
                 }
             }
         });
