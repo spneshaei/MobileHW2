@@ -472,13 +472,14 @@ public class DashboardFragment extends Fragment implements OnMapReadyCallback, P
         if (markerViewManager != null) {
             markerViewManager.onDestroy();
         }
-        mapView.onDestroy();
-        gpsManager.stopListening();
-        gpsManager.setGPSCallback(null);
-        gpsManager = null;
+        if (mapView != null) mapView.onDestroy();
+        if (gpsManager != null) {
+            gpsManager.stopListening();
+            gpsManager.setGPSCallback(null);
+            gpsManager = null;
+        }
 
-        if (speechRecognizer != null)
-            speechRecognizer.destroy();
+        if (speechRecognizer != null) speechRecognizer.destroy();
     }
 
 
