@@ -10,6 +10,7 @@ import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.text.DecimalFormat;
 import java.util.List;
 
 import edu.sharif.ce.mobile.mapapp.R;
@@ -40,7 +41,8 @@ public class BookmarkRecyclerViewAdapter extends RecyclerView.Adapter<BookmarkRe
     public void onBindViewHolder(ViewHolder holder, int position) {
         Bookmark bookmark = data.get(position);
         holder.txtTitle.setText(bookmark.getName());
-        holder.txtLatLon.setText("Lat: " + bookmark.getLat() + " - Lon: " + bookmark.getLon());
+        DecimalFormat df = new DecimalFormat("#.###");
+        holder.txtLatLon.setText("Lat: " + df.format(bookmark.getLat()) + " - Lon: " + df.format(bookmark.getLon()));
     }
 
     @Override
