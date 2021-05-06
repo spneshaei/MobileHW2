@@ -26,10 +26,9 @@
 
             <AutoCompleteTextView
                 android:id="@+id/autoCompleteTextView"
-                android:backgroundTint="@color/purple_main"
+                style="@style/autoCompleteEditText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@color/white"
                 android:hint="@string/search_location"
                 android:completionThreshold="1"
                 android:paddingVertical="10dp"
@@ -88,7 +87,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:src="@drawable/ic_baseline_my_location_24"
-                android:backgroundTint="@color/purple_main"
+                style="@style/roundButton"
                 tools:ignore="ContentDescription" />
 
         </LinearLayout>

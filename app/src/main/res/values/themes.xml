@@ -5,6 +5,7 @@
         <item name="colorPrimary">@color/purple_500</item>
         <item name="colorPrimaryVariant">@color/purple_700</item>
         <item name="colorOnPrimary">@color/white</item>
+        <item name="android:colorBackground">@color/bright_purple</item>
         <!-- Secondary brand color. -->
         <item name="colorSecondary">@color/teal_200</item>
         <item name="colorSecondaryVariant">@color/teal_700</item>
@@ -12,5 +13,18 @@
         <!-- Status bar color. -->
         <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>
         <!-- Customize your theme here. -->
+    </style>
+
+    <style name="boxStyle">
+        <item name="android:background">@drawable/custom_border</item>
+    </style>
+
+    <style name="autoCompleteEditText">
+        <item name="android:backgroundTint">@color/purple_main</item>
+        <item name="android:background">@color/white</item>
+    </style>
+
+    <style name="roundButton">
+        <item name="android:backgroundTint">@color/purple_main</item>
     </style>
 </resources>
