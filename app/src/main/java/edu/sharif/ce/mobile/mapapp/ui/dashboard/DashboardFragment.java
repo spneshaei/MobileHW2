@@ -322,7 +322,10 @@ public class DashboardFragment extends Fragment implements OnMapReadyCallback, P
         DashboardFragment.this.mapboxMap = mapboxMap;
         DashboardFragment.this.markerViewManager = new MarkerViewManager(mapView, mapboxMap);
 
-
+        if (getArguments() != null) {
+            Bookmark bookmark = (Bookmark) getArguments().getSerializable("bookmark");
+            showBookMark(bookmark);
+        }
         mapboxMap.addOnMapLongClickListener(new MapboxMap.OnMapLongClickListener() {
             @Override
             public boolean onMapLongClick(@NonNull LatLng point) {

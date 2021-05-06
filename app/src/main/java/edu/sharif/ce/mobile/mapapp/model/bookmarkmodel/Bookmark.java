@@ -5,6 +5,7 @@ import androidx.room.Entity;
 import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -12,7 +13,7 @@ import java.util.List;
  * All Rights Reserved
  */
 @Entity(tableName = "bookmark")
-public class Bookmark {
+public class Bookmark implements Serializable {
     @PrimaryKey(autoGenerate = true)
     private int id;
 
