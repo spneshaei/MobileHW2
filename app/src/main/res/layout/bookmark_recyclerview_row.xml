@@ -6,6 +6,7 @@
     android:paddingHorizontal="4dp"
     android:background="@drawable/custom_border"
     android:layout_marginVertical="2dp"
+    android:backgroundTint="@color/light_purple"
     android:orientation="horizontal">
 
     <LinearLayout
