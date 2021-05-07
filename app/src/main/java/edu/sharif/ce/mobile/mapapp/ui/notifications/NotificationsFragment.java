@@ -53,12 +53,7 @@ public class NotificationsFragment extends PreferenceFragmentCompat implements S
         MaterialAlertDialogBuilder dialogBuilder = new MaterialAlertDialogBuilder(getContext());
         dialogBuilder.setTitle("Clear All Data")
                 .setMessage("All your data will be erased. Proceed?")
-                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        eraseAllData();
-                    }
-                });
+                .setPositiveButton("Yes", (dialogInterface, i) -> eraseAllData());
         dialogBuilder.show();
     }
 
@@ -66,21 +61,15 @@ public class NotificationsFragment extends PreferenceFragmentCompat implements S
         Bookmarker.deleteAllBookmarks(getContext());
         getPreferenceScreen().getSharedPreferences()
                 .edit().putBoolean("darkMode", false).apply();
-        // TODO: Also delete caches
-        // TODO: Rotation problem in app!!!
-    }
-
-    public void insertRandomBookmark() {
-        Bookmarker.insertBookmark(getContext(), UUID.randomUUID().toString(), 1.0, 2.0);
     }
 
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-        if (key.equals("darkMode")) {
-            if (sharedPreferences.getBoolean(key, false))
-                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
-            else
-                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+        if (!key.equals("darkMode")) return;
+        if (sharedPreferences.getBoolean(key, false)) {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+        } else {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
         }
     }
 

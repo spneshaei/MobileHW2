@@ -97,12 +97,11 @@ public class HomeFragment extends Fragment {
         Bookmarker.deleteBookmark(getContext(), bookmark);
     }
 
-
     private void showDeleteAlertDialog(int position) {
         Bookmark bookmark = adapter.getItem(position);
         String messageBuilder = getString(R.string.delete_bookmark_message) + "\n" +
                 bookmark.getName() + "\n" +
-                "Lat: " + bookmark.getLat() + ", Lng: " + bookmark.getLon();
+                "Latitute: " + bookmark.getLat() + ", Longitude: " + bookmark.getLon();
         MaterialAlertDialogBuilder alertBuilder = new MaterialAlertDialogBuilder(getContext());
         alertBuilder.setTitle(getString(R.string.delete_bookmark_title))
                 .setMessage(messageBuilder)
@@ -123,9 +122,7 @@ public class HomeFragment extends Fragment {
         }
         if (adapter == null) {
             adapter = new BookmarkRecyclerViewAdapter(getContext(), filteredBookmarks);
-        } else {
-            adapter.notifyDataSetChanged();
-        }
+        } else adapter.notifyDataSetChanged();
         noBookmarksText.setVisibility(adapter.getItemCount() == 0 ? View.VISIBLE : View.GONE);
     }
 }

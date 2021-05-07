@@ -86,12 +86,7 @@ public class DashboardFragment extends Fragment implements OnMapReadyCallback, P
     private MapboxMap mapboxMap;
     private MarkerViewManager markerViewManager;
     private MapView mapView;
-    private View root;
     private GPSManager gpsManager = null;
-    private double speed = 0.0;
-    private Boolean isGPSEnabled = false;
-    private LocationManager locationManager;
-    private double currentSpeed, kmphSpeed;
     private TextView mySpeedText;
     private AutoCompleteTextView autoCompleteTextView;
     private static final ArrayList<String> searchBookmarks = new ArrayList<>();
@@ -114,10 +109,8 @@ public class DashboardFragment extends Fragment implements OnMapReadyCallback, P
         @Override
         public void handleMessage(Message msg) {
             DashboardFragment fragment = this.fragment.get();
-            if (fragment != null) {
-                if (msg.what == NotificationID.TopRelatedSearches.NEW_DATA_LOADED_FOR_UI) {
-                    fragment.notifyDataSetChanged();
-                }
+            if (fragment != null && msg.what == NotificationID.TopRelatedSearches.NEW_DATA_LOADED_FOR_UI) {
+                fragment.notifyDataSetChanged();
             }
         }
     }
@@ -135,7 +128,7 @@ public class DashboardFragment extends Fragment implements OnMapReadyCallback, P
         Mapbox.getInstance(getActivity(), getString(R.string.mapbox_access_token));
 
 
-        this.root = inflater.inflate(R.layout.fragment_dashboard, container, false);
+        View root = inflater.inflate(R.layout.fragment_dashboard, container, false);
 
         NotificationCenter.registerForNotification(this.handler, NotificationID.TopRelatedSearches.NEW_DATA_LOADED_FOR_UI);
 
@@ -177,88 +170,16 @@ public class DashboardFragment extends Fragment implements OnMapReadyCallback, P
             checkPermission();
         }
 
-//        speechRecognizer = SpeechRecognizer.createSpeechRecognizer(getContext());
-//
-//        final Intent speechRecognizerIntent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
-//        speechRecognizerIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
-//        speechRecognizerIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault());
-//
-//        speechRecognizer.setRecognitionListener(new RecognitionListener() {
-//            @Override
-//            public void onReadyForSpeech(Bundle bundle) {
-//
-//            }
-//
-//            @Override
-//            public void onBeginningOfSpeech() {
-//                autoCompleteTextView.setText("");
-//                autoCompleteTextView.setHint("Listening...");
-//            }
-//
-//            @Override
-//            public void onRmsChanged(float v) {
-//
-//            }
-//
-//            @Override
-//            public void onBufferReceived(byte[] bytes) {
-//
-//            }
-//
-//            @Override
-//            public void onEndOfSpeech() {
-//
-//            }
-//
-//            @Override
-//            public void onError(int i) {
-//                Log.e("mic", "error happened");
-//            }
-//
-//            @Override
-//            public void onResults(Bundle bundle) {
-//                speechToTextImg.setImageResource(R.drawable.ic_baseline_mic_24);
-//                ArrayList<String> data = bundle.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION);
-//                autoCompleteTextView.setText(data.get(0));
-//            }
-//
-//            @Override
-//            public void onPartialResults(Bundle bundle) {
-//
-//            }
-//
-//            @Override
-//            public void onEvent(int i, Bundle bundle) {
-//
-//            }
-//        });
-
-//        speechToTextImg.setOnTouchListener(new View.OnTouchListener() {
-//            @Override
-//            public boolean onTouch(View view, MotionEvent motionEvent) {
-//                if (motionEvent.getAction() == MotionEvent.ACTION_UP){
-//                    speechRecognizer.stopListening();
-//                }
-//                if (motionEvent.getAction() == MotionEvent.ACTION_DOWN){
-//                    speechToTextImg.setImageResource(R.drawable.ic_baseline_mic_24);
-//                    speechRecognizer.startListening(speechRecognizerIntent);
-//                }
-//                return false;
-//            }
-//        });
-        speechToTextImg.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
-                intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
-                        RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
-                intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault());
-                intent.putExtra(RecognizerIntent.EXTRA_PROMPT, "Say something");
-                if (intent.resolveActivity(getActivity().getPackageManager()) != null) {
-                    startActivityForResult(intent, REQUEST_CODE_SPEECH_INTENT);
-                } else {
-                    Toast.makeText(getActivity(), "Your device doesn't support speech input", Toast.LENGTH_LONG).show();
-                }
+        speechToTextImg.setOnClickListener(view -> {
+            Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+            intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
+                    RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+            intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault());
+            intent.putExtra(RecognizerIntent.EXTRA_PROMPT, "Say something");
+            if (intent.resolveActivity(getActivity().getPackageManager()) != null) {
+                startActivityForResult(intent, REQUEST_CODE_SPEECH_INTENT);
+            } else {
+                Toast.makeText(getActivity(), "Your device doesn't support speech input", Toast.LENGTH_LONG).show();
             }
         });
 
@@ -267,7 +188,9 @@ public class DashboardFragment extends Fragment implements OnMapReadyCallback, P
 
     private void checkPermission() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.RECORD_AUDIO}, RecordAudioRequestCode);
+            ActivityCompat.requestPermissions(getActivity(),
+                    new String[] { Manifest.permission.RECORD_AUDIO },
+                    RecordAudioRequestCode);
         }
     }
 
@@ -276,20 +199,17 @@ public class DashboardFragment extends Fragment implements OnMapReadyCallback, P
         super.onViewCreated(view, savedInstanceState);
         searchAdapter = new PlaceAdapter(getContext(), android.R.layout.simple_dropdown_item_1line, searchBookmarks);
         autoCompleteTextView.setAdapter(searchAdapter);
-        autoCompleteTextView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                String selected = (String) adapterView.getItemAtPosition(i);
-                Bookmark bookmark = Bookmark.getBookmarkByName(selected, NetworkInterface.searchBookmarks);
-                showBookMark(bookmark);
-            }
+        autoCompleteTextView.setOnItemClickListener((adapterView, view1, i, l) -> {
+            String selected = (String) adapterView.getItemAtPosition(i);
+            Bookmark bookmark = Bookmark.getBookmarkByName(selected, NetworkInterface.searchBookmarks);
+            showBookMark(bookmark);
         });
     }
 
     public void getCurrentSpeed(View view) {
-        locationManager = (LocationManager) getActivity().getSystemService(getActivity().LOCATION_SERVICE);
+        LocationManager locationManager = (LocationManager) getActivity().getSystemService(getActivity().LOCATION_SERVICE);
         gpsManager = new GPSManager(getContext());
-        isGPSEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+        boolean isGPSEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
         if (isGPSEnabled) {
             gpsManager.startListening(getActivity().getApplicationContext());
             gpsManager.setGPSCallback(this);
@@ -307,85 +227,64 @@ public class DashboardFragment extends Fragment implements OnMapReadyCallback, P
     }
 
     public void animateCamera(double lat, double lon) {
-        CameraPosition position = new CameraPosition.Builder()
-                .target(new LatLng(lat, lon))
-                .zoom(15)
-                .bearing(0)
-                .tilt(0)
+        CameraPosition position = new CameraPosition.Builder().target(new LatLng(lat, lon))
+                .zoom(15).bearing(0).tilt(0)
                 .build();
-        mapboxMap.animateCamera(CameraUpdateFactory
-                .newCameraPosition(position), 1000);
+        mapboxMap.animateCamera(CameraUpdateFactory.newCameraPosition(position), 1000);
     }
 
     @Override
     public void onMapReady(@NonNull MapboxMap mapboxMap) {
         DashboardFragment.this.mapboxMap = mapboxMap;
         DashboardFragment.this.markerViewManager = new MarkerViewManager(mapView, mapboxMap);
-
         if (getArguments() != null) {
-            Bookmark bookmark = (Bookmark) getArguments().getSerializable("bookmark");
-            showBookMark(bookmark);
+            showBookMark((Bookmark) getArguments().getSerializable("bookmark"));
         }
-        mapboxMap.addOnMapLongClickListener(new MapboxMap.OnMapLongClickListener() {
-            @Override
-            public boolean onMapLongClick(@NonNull LatLng point) {
-                mapboxMap.clear();
-                IconFactory iconFactory = IconFactory.getInstance(getContext());
-                Icon icon = iconFactory.fromResource(R.drawable.marker_red3);
 
-                mapboxMap.addMarker(new MarkerOptions().position(new LatLng(point.getLatitude(), point.getLongitude())).icon(icon));
+        mapboxMap.addOnMapLongClickListener(point -> {
+            mapboxMap.clear();
+            IconFactory iconFactory = IconFactory.getInstance(getContext());
+            Icon icon = iconFactory.fromResource(R.drawable.marker_red3);
 
-                AlertDialog.Builder alert = new AlertDialog.Builder(getContext());
-                final EditText edittext = new EditText(getContext());
-                edittext.setPadding(40, 10, 10, 10);
-                edittext.setHint("type location name here.");
-                edittext.setMaxLines(1);
-                alert.setMessage("Location Name");
-                DecimalFormat df = new DecimalFormat("#.##");
+            mapboxMap.addMarker(new MarkerOptions().position(new LatLng(point.getLatitude(), point.getLongitude())).icon(icon));
 
-                alert.setTitle("Save Location (" + df.format(point.getLatitude()) + ", " + df.format(point.getLongitude()) + ")");
-                alert.setView(edittext);
+            AlertDialog.Builder alert = new AlertDialog.Builder(getContext());
+            final EditText edittext = new EditText(getContext());
+            edittext.setPadding(40, 10, 10, 10);
+            edittext.setHint("Type location name here");
+            edittext.setMaxLines(1);
+            alert.setMessage("Location Name");
+            DecimalFormat df = new DecimalFormat("#.##");
 
-                alert.setPositiveButton("Save", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int whichButton) {
-                        String editTextValue = edittext.getText().toString();
-                        Bookmarker.insertBookmark(getContext(), editTextValue, point.getLatitude(), point.getLongitude());
-                    }
-                });
+            alert.setTitle("Save Location (" + df.format(point.getLatitude()) + ", " + df.format(point.getLongitude()) + ")");
+            alert.setView(edittext);
 
-                alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int whichButton) {
-                        mapboxMap.clear();
-                    }
-                });
+            alert.setPositiveButton("Save", (dialog, whichButton) -> {
+                String editTextValue = edittext.getText().toString();
+                Bookmarker.insertBookmark(getContext(), editTextValue, point.getLatitude(), point.getLongitude());
+            });
 
-                AlertDialog dialog = alert.create();
-                dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-                WindowManager.LayoutParams wmlp = dialog.getWindow().getAttributes();
+            alert.setNegativeButton("Cancel", (dialog, whichButton) -> mapboxMap.clear());
 
-                wmlp.gravity = Gravity.BOTTOM;
-                wmlp.verticalMargin = 0.08F;
+            AlertDialog dialog = alert.create();
+            dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+            WindowManager.LayoutParams layoutParams = dialog.getWindow().getAttributes();
 
-                dialog.show();
+            layoutParams.gravity = Gravity.BOTTOM;
+            layoutParams.verticalMargin = 0.08F;
 
-                return true;
-            }
+            dialog.show();
+
+            return true;
         });
 
-        mapboxMap.setStyle(Style.OUTDOORS,
-                new Style.OnStyleLoaded() {
-                    @Override
-                    public void onStyleLoaded(@NonNull Style style) {
-                        enableLocationComponent(style);
-                    }
-                });
+        mapboxMap.setStyle(Style.OUTDOORS, this::enableLocationComponent);
     }
 
 
     @SuppressWarnings({"MissingPermission"})
     private void enableLocationComponent(@NonNull Style loadedMapStyle) {
         if (PermissionsManager.areLocationPermissionsGranted(getActivity())) {
-
             LocationComponent locationComponent = mapboxMap.getLocationComponent();
 
             locationComponent.activateLocationComponent(
@@ -418,16 +317,8 @@ public class DashboardFragment extends Fragment implements OnMapReadyCallback, P
 
     @Override
     public void onPermissionResult(boolean granted) {
-        if (granted) {
-            mapboxMap.getStyle(new Style.OnStyleLoaded() {
-                @Override
-                public void onStyleLoaded(@NonNull Style style) {
-                    enableLocationComponent(style);
-                }
-            });
-        } else {
-            getActivity().finish();
-        }
+        if (granted) mapboxMap.getStyle(this::enableLocationComponent);
+        else getActivity().finish();
     }
 
     @Override
@@ -488,15 +379,15 @@ public class DashboardFragment extends Fragment implements OnMapReadyCallback, P
 
     @Override
     public void onGPSUpdate(Location location) {
-        speed = location.getSpeed();
-        currentSpeed = round(speed, 3, BigDecimal.ROUND_HALF_UP);
-        kmphSpeed = round((currentSpeed * 3.6), 3, BigDecimal.ROUND_HALF_UP);
+        double speed = location.getSpeed();
+        double currentSpeed = round(speed, 3, BigDecimal.ROUND_HALF_UP);
+        double kmphSpeed = round((currentSpeed * 3.6), 3, BigDecimal.ROUND_HALF_UP);
         Log.d("speed", kmphSpeed + "km/h");
         mySpeedText.setText(String.format("%s km/h", kmphSpeed));
     }
 
-    public static double round(double unrounded, int precision, int roundingMode) {
-        BigDecimal bd = new BigDecimal(unrounded);
+    public static double round(double unRounded, int precision, int roundingMode) {
+        BigDecimal bd = new BigDecimal(unRounded);
         BigDecimal rounded = bd.setScale(precision, roundingMode);
         return rounded.doubleValue();
     }
