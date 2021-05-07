@@ -81,6 +81,7 @@
                 android:layout_marginBottom="8dp"
                 android:textAlignment="center"
                 android:textColor="@color/black"
+                android:textStyle="bold|italic"
                 android:textSize="18sp" />
 
             <com.google.android.material.floatingactionbutton.FloatingActionButton

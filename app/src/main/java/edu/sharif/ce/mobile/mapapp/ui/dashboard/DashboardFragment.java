@@ -14,6 +14,9 @@ import android.os.Message;
 import android.speech.RecognitionListener;
 import android.speech.RecognizerIntent;
 import android.speech.SpeechRecognizer;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.style.RelativeSizeSpan;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.KeyEvent;
@@ -254,9 +257,14 @@ public class DashboardFragment extends Fragment implements OnMapReadyCallback, P
                         AlertDialog.Builder alert = new AlertDialog.Builder(getContext());
                         final EditText edittext = new EditText(getContext());
                         edittext.setPadding(40, 10, 10, 10);
-                        edittext.setHint("Type location name here");
+                        
+                        String strHint = "Type location name here";
+                        SpannableString span = new SpannableString(strHint);
+                        span.setSpan(new RelativeSizeSpan(0.85f), 0, strHint.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                        edittext.setHint(span);
+
                         edittext.setMaxLines(1);
-                        alert.setMessage("Location Name");
+                        alert.setMessage("Location Name :");
                         DecimalFormat df = new DecimalFormat("#.##");
 
                         alert.setTitle("Save Location (" + df.format(point.getLatitude()) + ", " + df.format(point.getLongitude()) + ")");
