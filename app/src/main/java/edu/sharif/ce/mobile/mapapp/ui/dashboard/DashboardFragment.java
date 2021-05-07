@@ -235,50 +235,63 @@ public class DashboardFragment extends Fragment implements OnMapReadyCallback, P
 
     @Override
     public void onMapReady(@NonNull MapboxMap mapboxMap) {
-        DashboardFragment.this.mapboxMap = mapboxMap;
-        DashboardFragment.this.markerViewManager = new MarkerViewManager(mapView, mapboxMap);
-        if (getArguments() != null) {
-            showBookMark((Bookmark) getArguments().getSerializable("bookmark"));
-        }
+        new Thread(() -> {
+            try {
+                Thread.sleep(500);
+                DashboardFragment.this.getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        DashboardFragment.this.mapboxMap = mapboxMap;
+                        DashboardFragment.this.markerViewManager = new MarkerViewManager(mapView, mapboxMap);
+                        if (getArguments() != null) {
+                            showBookMark((Bookmark) getArguments().getSerializable("bookmark"));
+                        }
 
-        mapboxMap.addOnMapLongClickListener(point -> {
-            mapboxMap.clear();
-            IconFactory iconFactory = IconFactory.getInstance(getContext());
-            Icon icon = iconFactory.fromResource(R.drawable.marker_red3);
+                        mapboxMap.addOnMapLongClickListener(point -> {
+                            mapboxMap.clear();
+                            IconFactory iconFactory = IconFactory.getInstance(getContext());
+                            Icon icon = iconFactory.fromResource(R.drawable.marker_red3);
 
-            mapboxMap.addMarker(new MarkerOptions().position(new LatLng(point.getLatitude(), point.getLongitude())).icon(icon));
+                            mapboxMap.addMarker(new MarkerOptions().position(new LatLng(point.getLatitude(), point.getLongitude())).icon(icon));
 
-            AlertDialog.Builder alert = new AlertDialog.Builder(getContext());
-            final EditText edittext = new EditText(getContext());
-            edittext.setPadding(40, 10, 10, 10);
-            edittext.setHint("Type location name here");
-            edittext.setMaxLines(1);
-            alert.setMessage("Location Name");
-            DecimalFormat df = new DecimalFormat("#.##");
+                            AlertDialog.Builder alert = new AlertDialog.Builder(getContext());
+                            final EditText edittext = new EditText(getContext());
+                            edittext.setPadding(40, 10, 10, 10);
+                            edittext.setHint("Type location name here");
+                            edittext.setMaxLines(1);
+                            alert.setMessage("Location Name");
+                            DecimalFormat df = new DecimalFormat("#.##");
 
-            alert.setTitle("Save Location (" + df.format(point.getLatitude()) + ", " + df.format(point.getLongitude()) + ")");
-            alert.setView(edittext);
+                            alert.setTitle("Save Location (" + df.format(point.getLatitude()) + ", " + df.format(point.getLongitude()) + ")");
+                            alert.setView(edittext);
 
-            alert.setPositiveButton("Save", (dialog, whichButton) -> {
-                String editTextValue = edittext.getText().toString();
-                Bookmarker.insertBookmark(getContext(), editTextValue, point.getLatitude(), point.getLongitude());
-            });
+                            alert.setPositiveButton("Save", (dialog, whichButton) -> {
+                                String editTextValue = edittext.getText().toString();
+                                Bookmarker.insertBookmark(getContext(), editTextValue, point.getLatitude(), point.getLongitude());
+                            });
 
-            alert.setNegativeButton("Cancel", (dialog, whichButton) -> mapboxMap.clear());
+                            alert.setNegativeButton("Cancel", (dialog, whichButton) -> mapboxMap.clear());
 
-            AlertDialog dialog = alert.create();
-            dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-            WindowManager.LayoutParams layoutParams = dialog.getWindow().getAttributes();
+                            AlertDialog dialog = alert.create();
+                            dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+                            WindowManager.LayoutParams layoutParams = dialog.getWindow().getAttributes();
 
-            layoutParams.gravity = Gravity.BOTTOM;
-            layoutParams.verticalMargin = 0.08F;
+                            layoutParams.gravity = Gravity.BOTTOM;
+                            layoutParams.verticalMargin = 0.08F;
 
-            dialog.show();
+                            dialog.show();
 
-            return true;
-        });
+                            return true;
+                        });
 
-        mapboxMap.setStyle(Style.OUTDOORS, this::enableLocationComponent);
+                        mapboxMap.setStyle(Style.OUTDOORS, DashboardFragment.this::enableLocationComponent);
+                    }
+                });
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }).start();
+
     }
 
 
