@@ -199,7 +199,7 @@ public class DashboardFragment extends Fragment implements OnMapReadyCallback, P
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        searchAdapter = new PlaceAdapter(getContext(), android.R.layout.simple_dropdown_item_1line, searchBookmarks);
+        searchAdapter = new PlaceAdapter(getActivity(), android.R.layout.simple_dropdown_item_1line, searchBookmarks);
         autoCompleteTextView.setAdapter(searchAdapter);
         autoCompleteTextView.setOnItemClickListener((adapterView, view1, i, l) -> {
             String selected = (String) adapterView.getItemAtPosition(i);
@@ -213,7 +213,7 @@ public class DashboardFragment extends Fragment implements OnMapReadyCallback, P
         gpsManager = new GPSManager(getContext());
         boolean isGPSEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
         if (isGPSEnabled) {
-            gpsManager.startListening(getActivity().getApplicationContext());
+            gpsManager.startListening(getActivity());
             gpsManager.setGPSCallback(this);
         } else {
             gpsManager.showSettingsAlert();
@@ -257,7 +257,7 @@ public class DashboardFragment extends Fragment implements OnMapReadyCallback, P
                         AlertDialog.Builder alert = new AlertDialog.Builder(getContext());
                         final EditText edittext = new EditText(getContext());
                         edittext.setPadding(40, 10, 10, 10);
-                        
+
                         String strHint = "Type location name here";
                         SpannableString span = new SpannableString(strHint);
                         span.setSpan(new RelativeSizeSpan(0.85f), 0, strHint.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
