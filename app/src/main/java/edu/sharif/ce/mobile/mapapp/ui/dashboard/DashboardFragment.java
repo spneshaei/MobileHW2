@@ -94,7 +94,6 @@ public class DashboardFragment extends Fragment implements OnMapReadyCallback, P
     public static final Integer RecordAudioRequestCode = 1;
     public static final int REQUEST_CODE_SPEECH_INTENT = 1000;
     private ImageView speechToTextImg;
-    private SpeechRecognizer speechRecognizer;
 
 
     private final DashboardFragment.WeakHandler handler = new DashboardFragment.WeakHandler(this);
@@ -189,7 +188,7 @@ public class DashboardFragment extends Fragment implements OnMapReadyCallback, P
     private void checkPermission() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             ActivityCompat.requestPermissions(getActivity(),
-                    new String[] { Manifest.permission.RECORD_AUDIO },
+                    new String[]{Manifest.permission.RECORD_AUDIO},
                     RecordAudioRequestCode);
         }
     }
@@ -382,8 +381,6 @@ public class DashboardFragment extends Fragment implements OnMapReadyCallback, P
             gpsManager.setGPSCallback(null);
             gpsManager = null;
         }
-
-        if (speechRecognizer != null) speechRecognizer.destroy();
     }
 
 
