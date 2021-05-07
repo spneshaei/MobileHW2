@@ -4,10 +4,13 @@ import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -38,6 +41,7 @@ public class HomeFragment extends Fragment {
     ArrayList<Bookmark> filteredBookmarks = new ArrayList<>();
     String searchTerm = "";
     TextView noBookmarksText;
+    EditText txtSearch;
 
     private final WeakHandler handler = new WeakHandler(this);
 
@@ -63,6 +67,7 @@ public class HomeFragment extends Fragment {
                              ViewGroup container, Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_home, container, false);
         noBookmarksText = root.findViewById(R.id.no_bookmarks_text);
+        txtSearch = root.findViewById(R.id.txtSearch);
 
         RecyclerView recyclerView = root.findViewById(R.id.bookmarksRecyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -73,6 +78,15 @@ public class HomeFragment extends Fragment {
 
         NotificationCenter.registerForNotification(this.handler, NotificationID.Bookmarks.DATA_LOADED_FROM_DB);
         Bookmarker.reloadBookmarkList(getContext());
+
+        txtSearch.addTextChangedListener(new TextWatcher() {
+            @Override public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) { }
+            @Override public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                searchTerm = String.valueOf(charSequence);
+                notifyDataSetChanged();
+            }
+            @Override public void afterTextChanged(Editable editable) { }
+        });
 
         return root;
     }
